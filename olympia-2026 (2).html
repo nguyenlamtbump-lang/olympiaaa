@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đường Lên Đỉnh Olympia — Bản dựng 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,600&display=swap" rel="stylesheet">
+<style>
+/* ============================= TOKENS ============================= */
+:root{
+  --navy-950:#070f22;
+  --navy-900:#0c1c3d;
+  --navy-850:#0f234c;
+  --navy-800:#153064;
+  --navy-700:#1c4184;
+  --navy-600:#2a55a8;
+  --gold-500:#e7b93a;
+  --gold-300:#f3d787;
+  --gold-100:#faeec2;
+  --red-600:#c1272d;
+  --red-700:#9c1e23;
+  --green-600:#2fa84f;
+  --green-700:#227d3b;
+  --paper-100:#f4efe0;
+  --ink-050:#eef1f9;
+  --ink-300:#b9c3dc;
+  --ink-500:#7f8bb0;
+  --shadow-deep: 0 20px 50px rgba(3,8,20,.55);
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --font-display: "Be Vietnam Pro", "Segoe UI", Roboto, Arial, sans-serif;
+  --font-body: "Be Vietnam Pro", "Segoe UI", Roboto, Arial, sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  font-family:var(--font-body);
+  color:var(--ink-050);
+  background:
+    radial-gradient(1200px 700px at 15% -10%, rgba(231,185,58,.10), transparent 60%),
+    radial-gradient(1000px 800px at 110% 10%, rgba(42,85,168,.35), transparent 55%),
+    linear-gradient(180deg, var(--navy-950), var(--navy-900) 45%, var(--navy-950));
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit;}
+::selection{background:var(--gold-500);color:var(--navy-950);}
+h1,h2,h3,h4{font-family:var(--font-display);margin:0;}
+.hidden{display:none !important;}
+.small-muted{color:var(--ink-500);font-size:13px;}
+a{color:var(--gold-300);}
+
+/* focus visibility for accessibility */
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible{
+  outline:3px solid var(--gold-300); outline-offset:2px;
+}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important; transition-duration:.001ms !important;}
+}
+
+/* ============================= EMBLEM ============================= */
+.emblem{ width:96px; height:96px; margin:0 auto 10px; }
+.emblem svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 6px 14px rgba(231,185,58,.35)); }
+
+/* ============================= LAYOUT SHELLS ============================= */
+.app-shell{ max-width:1180px; margin:0 auto; padding:26px 20px 60px; }
+
+/* ---- Setup screen ---- */
+.setup-wrap{ display:flex; flex-direction:column; align-items:center; text-align:center; padding-top:28px;}
+.setup-title{ font-size:clamp(28px,5vw,44px); font-weight:900; letter-spacing:.5px; color:var(--gold-300); text-shadow:0 2px 0 rgba(0,0,0,.35);}
+.setup-sub{ color:var(--ink-300); margin-top:8px; font-size:15px; max-width:520px;}
+.setup-card{
+  margin-top:30px; width:100%; max-width:720px; background:linear-gradient(180deg, var(--navy-850), var(--navy-800));
+  border:1px solid rgba(231,185,58,.25); border-radius:var(--radius-lg); padding:26px 26px 30px; box-shadow:var(--shadow-deep);
+  text-align:left;
+}
+.setup-step-label{ font-size:13px; color:var(--gold-300); font-weight:700; margin-bottom:10px;}
+.player-count-row{ display:flex; gap:10px; flex-wrap:wrap; }
+.count-btn{
+  flex:1; min-width:80px; padding:14px 8px; border-radius:var(--radius-md); border:2px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.03); color:var(--ink-050); font-weight:700; font-size:18px; cursor:pointer; transition:transform .12s, border-color .12s, background .12s;
+}
+.count-btn:hover{ transform:translateY(-2px); border-color:var(--gold-500); }
+.count-btn.active{ border-color:var(--gold-500); background:rgba(231,185,58,.15); color:var(--gold-300); }
+.name-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:6px;}
+@media (max-width:520px){ .name-grid{ grid-template-columns:1fr; } }
+.name-field{ display:flex; flex-direction:column; gap:6px; }
+.name-field label{ font-size:12px; color:var(--ink-300); }
+.name-field input{
+  background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.15); border-radius:10px; padding:10px 12px;
+  color:var(--ink-050); font-size:15px;
+}
+.color-dot{ width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:6px; vertical-align:middle;}
+
+.data-tabs{ display:flex; gap:8px; margin-top:6px;}
+.data-tab{ padding:8px 14px; border-radius:999px; border:1px solid rgba(255,255,255,.15); background:transparent; color:var(--ink-300); cursor:pointer; font-size:13px; font-weight:600;}
+.data-tab.active{ background:var(--gold-500); color:var(--navy-950); border-color:var(--gold-500); }
+.data-panel textarea{
+  width:100%; min-height:150px; margin-top:10px; background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.15);
+  border-radius:10px; color:var(--ink-050); font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12.5px; padding:12px; resize:vertical;
+}
+.file-drop{
+  margin-top:10px; border:2px dashed rgba(255,255,255,.2); border-radius:10px; padding:18px; text-align:center; color:var(--ink-300); font-size:13px;
+}
+.file-drop input{ margin-top:8px;}
+.json-status{ margin-top:10px; font-size:13px; padding:10px 12px; border-radius:10px; display:none;}
+.json-status.ok{ display:block; background:rgba(47,168,79,.15); color:#9be3ab; border:1px solid rgba(47,168,79,.4);}
+.json-status.err{ display:block; background:rgba(193,39,45,.15); color:#ffb3b3; border:1px solid rgba(193,39,45,.4); white-space:pre-wrap;}
+
+.admin-fab{
+  position:fixed; top:14px; right:14px; z-index:60; width:42px; height:42px; border-radius:50%;
+  border:1px solid rgba(255,255,255,.25); background:rgba(12,28,61,.9); color:var(--gold-300);
+  font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-deep);
+}
+.admin-fab:hover{ background:rgba(21,48,100,.95); }
+.admin-input{
+  width:100%; margin-bottom:10px; padding:10px 12px; border-radius:10px; box-sizing:border-box;
+  background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.15); color:var(--ink-050); font-size:14px;
+}
+.admin-status-line{ font-size:13px; color:var(--ink-300); margin-top:6px; }
+
+.btn{
+  border:none; border-radius:12px; padding:13px 22px; font-weight:800; font-size:15px; cursor:pointer; transition:transform .12s, filter .12s, opacity .12s;
+  font-family:var(--font-display);
+}
+.btn:active{ transform:scale(.97); }
+.btn:disabled{ opacity:.4; cursor:not-allowed; }
+.btn-gold{ background:linear-gradient(180deg, var(--gold-300), var(--gold-500)); color:var(--navy-950); }
+.btn-gold:hover:not(:disabled){ filter:brightness(1.06); }
+.btn-outline{ background:transparent; border:1.5px solid rgba(255,255,255,.25); color:var(--ink-050); }
+.btn-outline:hover{ border-color:var(--gold-500); color:var(--gold-300); }
+.btn-green{ background:linear-gradient(180deg,#57cf78,var(--green-600)); color:#04220c;}
+.btn-red{ background:linear-gradient(180deg,#e9585d,var(--red-600)); color:#2b0405;}
+.btn-block{ width:100%; }
+.btn-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:22px; }
+
+/* ---- Game shell ---- */
+.game-shell{ display:none; }
+.game-shell.active{ display:block; }
+.top-bar{
+  display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  background:linear-gradient(180deg, var(--navy-850), var(--navy-900)); border:1px solid rgba(231,185,58,.2);
+  border-radius:var(--radius-lg); padding:14px 18px; box-shadow:var(--shadow-deep);
+}
+.brand-mini{ display:flex; align-items:center; gap:10px; }
+.brand-mini .emblem{ width:38px; height:38px; margin:0;}
+.brand-mini span{ font-weight:800; color:var(--gold-300); font-size:15px; letter-spacing:.3px;}
+.round-tabs{ display:flex; gap:6px; flex-wrap:wrap; }
+.round-tab{
+  padding:9px 14px; border-radius:10px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.03);
+  color:var(--ink-300); font-size:13px; font-weight:700; cursor:pointer; position:relative;
+}
+.round-tab.current{ background:var(--gold-500); color:var(--navy-950); border-color:var(--gold-500);}
+.round-tab.done::after{ content:"✓"; margin-left:6px; }
+.round-tab:disabled{ opacity:.35; cursor:not-allowed; }
+.top-actions{ display:flex; gap:8px; }
+.icon-btn{
+  width:38px; height:38px; border-radius:10px; border:1px solid rgba(255,255,255,.16); background:rgba(255,255,255,.04);
+  color:var(--ink-050); cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center;
+}
+.icon-btn:hover{ border-color:var(--gold-500); color:var(--gold-300); }
+
+.scoreboard{ display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); margin:16px 0 20px; }
+.score-card{
+  background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); border-radius:var(--radius-md);
+  border:1.5px solid rgba(255,255,255,.1); padding:12px 14px; position:relative; overflow:hidden; transition:border-color .2s, transform .2s;
+}
+.score-card.turn{ border-color:var(--gold-500); box-shadow:0 0 0 1px rgba(231,185,58,.35), 0 8px 20px rgba(231,185,58,.15); transform:translateY(-2px);}
+.score-card .bar{ position:absolute; left:0; top:0; bottom:0; width:5px; }
+.score-card .pname{ font-weight:800; font-size:14.5px; padding-left:8px; display:flex; align-items:center; gap:6px;}
+.score-card .pscore{ font-size:26px; font-weight:900; padding-left:8px; margin-top:2px; font-family:var(--font-display);}
+.score-card .ptag{ font-size:11px; color:var(--ink-500); padding-left:8px; margin-top:2px;}
+.star-icon{ color:var(--gold-300); }
+
+.stage{
+  background:linear-gradient(180deg, var(--navy-850), var(--navy-800)); border:1px solid rgba(231,185,58,.18);
+  border-radius:var(--radius-lg); padding:26px; box-shadow:var(--shadow-deep); min-height:340px;
+}
+.stage-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap; margin-bottom:16px;}
+.stage-title{ font-size:20px; font-weight:900; color:var(--gold-300); }
+.stage-desc{ color:var(--ink-300); font-size:13.5px; margin-top:4px; max-width:560px;}
+
+.timer-ring-wrap{ display:flex; align-items:center; gap:10px; }
+.timer-num{ font-family:var(--font-display); font-weight:900; font-size:34px; min-width:74px; text-align:center;
+  padding:6px 10px; border-radius:12px; background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.12);}
+.timer-num.warn{ color:var(--red-600); animation:pulse 1s infinite;}
+@keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.4;} }
+
+.question-box{
+  background:rgba(0,0,0,.22); border:1px solid rgba(255,255,255,.1); border-radius:var(--radius-md); padding:22px;
+  font-size:19px; line-height:1.55; min-height:90px; display:flex; align-items:center;
+}
+.subject-chip{ display:inline-block; background:var(--navy-700); color:var(--gold-300); font-size:11.5px; font-weight:700;
+  border-radius:999px; padding:4px 10px; margin-bottom:10px;}
+
+.answer-spoiler{
+  margin-top:14px; border:1px dashed rgba(231,185,58,.4); border-radius:10px; padding:14px; background:rgba(231,185,58,.05);
+}
+.answer-spoiler .lbl{ font-size:12px; color:var(--gold-300); font-weight:700; margin-bottom:6px; }
+.answer-text{ filter:blur(7px); user-select:none; transition:filter .15s; font-size:16px;}
+.answer-text.revealed{ filter:none; user-select:auto;}
+.reveal-toggle{ margin-top:10px; font-size:12.5px; }
+
+.judge-row{ display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; }
+.turn-controls{ display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; align-items:center;}
+
+.progress-dots{ display:flex; gap:6px; margin-top:10px;}
+.dot{ width:9px; height:9px; border-radius:50%; background:rgba(255,255,255,.18);}
+.dot.done{ background:var(--gold-500);}
+
+/* Tăng tốc — chuỗi ảnh gợi ý chạy liên tục */
+.tt-img-stage{ margin-bottom:16px; }
+.tt-img-frame{
+  position:relative; width:100%; aspect-ratio:16/9; max-height:380px; border-radius:var(--radius-md);
+  overflow:hidden; background:#000; border:1px solid rgba(255,255,255,.12);
+}
+.tt-img-el{ width:100%; height:100%; object-fit:contain; background:#000; animation:ttFadeIn .35s ease; display:block; }
+@keyframes ttFadeIn{ from{opacity:0;} to{opacity:1;} }
+.tt-img-fallback{
+  width:100%; height:100%; display:none; align-items:center; justify-content:center; text-align:center;
+  color:var(--ink-300); font-size:14px; padding:20px; background:rgba(255,255,255,.03);
+}
+.tt-img-controls{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; align-items:center; }
+.tt-img-counter{ margin-top:8px; }
+
+/* Vượt chướng ngại vật grid */
+.vcnv-wrap{ display:grid; grid-template-columns: 1.1fr .9fr; gap:20px; }
+@media (max-width:820px){ .vcnv-wrap{ grid-template-columns:1fr; } }
+.vcnv-rows{ display:flex; flex-direction:column; gap:10px; }
+.vcnv-row-btn{
+  display:flex; justify-content:space-between; align-items:center; padding:13px 16px; border-radius:10px;
+  border:1.5px solid rgba(255,255,255,.14); background:rgba(255,255,255,.03); cursor:pointer; color:var(--ink-050); font-weight:700;
+}
+.vcnv-row-btn:hover:not(:disabled){ border-color:var(--gold-500); }
+.vcnv-row-btn.solved{ border-color:var(--green-600); background:rgba(47,168,79,.12); }
+.vcnv-row-btn.missed{ border-color:var(--red-600); background:rgba(193,39,45,.1); opacity:.75;}
+.vcnv-row-btn:disabled{ cursor:default; }
+.vcnv-keyword-card{
+  background:rgba(0,0,0,.25); border:1.5px solid var(--gold-500); border-radius:var(--radius-md); padding:20px; text-align:center;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
+}
+.vcnv-keyword-blanks{ font-family:var(--font-display); letter-spacing:6px; font-size:26px; font-weight:900; color:var(--gold-300); word-break:break-all;}
+.vcnv-progress{ font-size:12.5px; color:var(--ink-300); }
+
+/* Về đích packages */
+.package-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:14px; }
+.package-tile{
+  border-radius:var(--radius-md); border:2px solid rgba(255,255,255,.14); background:rgba(255,255,255,.03);
+  padding:20px 12px; text-align:center; cursor:pointer;
+}
+.package-tile:hover:not(:disabled){ border-color:var(--gold-500); transform:translateY(-2px); }
+.package-tile:disabled{ opacity:.35; cursor:not-allowed; }
+.package-tile .pts{ font-size:30px; font-weight:900; color:var(--gold-300); font-family:var(--font-display);}
+.package-tile .left{ font-size:12px; color:var(--ink-300); margin-top:4px; }
+
+.steal-list{ display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;}
+.steal-chip{ padding:8px 12px; border-radius:999px; border:1.5px solid rgba(255,255,255,.16); background:rgba(255,255,255,.04); cursor:pointer; font-size:13px; font-weight:700;}
+.steal-chip:hover{ border-color:var(--gold-500); }
+.steal-chip.picked{ border-color:var(--gold-500); background:rgba(231,185,58,.15); color:var(--gold-300); }
+
+.star-toggle{ display:flex; align-items:center; gap:8px; margin-top:14px; font-size:13.5px; color:var(--gold-300); }
+
+/* Modal */
+.modal-overlay{ position:fixed; inset:0; background:rgba(4,8,18,.72); display:none; align-items:center; justify-content:center; z-index:50; padding:20px;}
+.modal-overlay.open{ display:flex; }
+.modal-box{
+  background:linear-gradient(180deg, var(--navy-850), var(--navy-800)); border:1px solid rgba(231,185,58,.3); border-radius:var(--radius-lg);
+  max-width:520px; width:100%; padding:24px; box-shadow:var(--shadow-deep); max-height:82vh; overflow:auto;
+}
+.modal-box h3{ color:var(--gold-300); font-size:18px; margin-bottom:12px;}
+.modal-box p, .modal-box li{ font-size:13.5px; color:var(--ink-300); line-height:1.6;}
+.modal-close-row{ margin-top:18px; display:flex; justify-content:flex-end;}
+
+/* Final results */
+.final-wrap{ text-align:center; padding:20px 0;}
+.podium{ display:flex; gap:14px; justify-content:center; align-items:flex-end; margin:30px 0; flex-wrap:wrap;}
+.podium-card{ background:linear-gradient(180deg, var(--navy-850), var(--navy-800)); border-radius:var(--radius-md); padding:18px 20px; min-width:130px; border:2px solid rgba(255,255,255,.12);}
+.podium-card.rank-1{ border-color:var(--gold-500); transform:translateY(-14px); box-shadow:0 12px 30px rgba(231,185,58,.25);}
+.podium-rank{ font-size:12px; color:var(--ink-300); font-weight:700;}
+.podium-name{ font-size:16px; font-weight:800; margin-top:6px;}
+.podium-score{ font-size:26px; font-weight:900; color:var(--gold-300); margin-top:4px; font-family:var(--font-display);}
+.trophy{ font-size:34px; }
+
+.footer-note{ text-align:center; color:var(--ink-500); font-size:12px; margin-top:34px; line-height:1.7;}
+</style>
+</head>
+<body>
+
+<!-- ============================= SETUP SCREEN ============================= -->
+<div class="app-shell" id="setupScreen">
+  <div class="setup-wrap">
+    <div class="emblem">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="g1" cx="35%" cy="30%" r="75%">
+            <stop offset="0%" stop-color="#fdf3c8"/>
+            <stop offset="55%" stop-color="#e7b93a"/>
+            <stop offset="100%" stop-color="#a9761e"/>
+          </radialGradient>
+        </defs>
+        <circle cx="50" cy="50" r="34" fill="url(#g1)" stroke="#7a5814" stroke-width="1.5"/>
+        <ellipse cx="50" cy="50" rx="34" ry="11" fill="none" stroke="#7a5814" stroke-width="1.2" opacity=".55"/>
+        <ellipse cx="50" cy="50" rx="11" ry="34" fill="none" stroke="#7a5814" stroke-width="1.2" opacity=".55"/>
+        <path d="M20 60 C30 78, 42 86, 50 90 C36 82, 27 72, 22 60 Z" fill="#3a7d3f"/>
+        <path d="M80 60 C70 78, 58 86, 50 90 C64 82, 73 72, 78 60 Z" fill="#3a7d3f"/>
+        <circle cx="50" cy="18" r="2.4" fill="#fdf3c8"/>
+      </svg>
+    </div>
+    <h1 class="setup-title">Đường Lên Đỉnh Olympia</h1>
+    <p class="setup-sub">Bản dựng lại phi chính thức cho lớp học / gia đình — 4 vòng thi Khởi động, Vượt chướng ngại vật, Tăng tốc, Về đích. Chơi được từ 2 đến 4 thí sinh trên cùng một thiết bị (màn hình MC).</p>
+
+    <div class="setup-card">
+      <div class="setup-step-label">BƯỚC 1 — SỐ THÍ SINH</div>
+      <div class="player-count-row" id="countRow"></div>
+
+      <div style="margin-top:22px;">
+        <div class="setup-step-label">BƯỚC 2 — TÊN THÍ SINH</div>
+        <div class="name-grid" id="nameGrid"></div>
+      </div>
+
+      <div style="margin-top:22px;">
+        <div class="setup-step-label">BƯỚC 3 — BỘ ĐỀ THI</div>
+        <div class="data-tabs">
+          <button class="data-tab active" data-tab="sample">Dùng đề mẫu có sẵn</button>
+          <button class="data-tab" data-tab="paste">Dán JSON đề thi</button>
+          <button class="data-tab" data-tab="file">Tải file .json</button>
+        </div>
+        <div class="data-panel" id="panel-sample">
+          <p class="small-muted" style="margin-top:10px;">Một bộ đề mẫu nhỏ đã được nạp sẵn để bạn thử toàn bộ 4 vòng thi ngay lập tức. Dùng mục "Dán JSON" hoặc "Tải file" để nạp đề thi đầy đủ do AI soạn (xem hướng dẫn prompt đi kèm).</p>
+        </div>
+        <div class="data-panel hidden" id="panel-paste">
+          <textarea id="jsonPaste" placeholder="Dán toàn bộ nội dung JSON đề thi vào đây..."></textarea>
+        </div>
+        <div class="data-panel hidden" id="panel-file">
+          <div class="file-drop">
+            Chọn file .json đề thi từ máy tính của bạn
+            <br><input type="file" id="jsonFile" accept="application/json,.json">
+          </div>
+        </div>
+        <div class="json-status" id="jsonStatus"></div>
+        <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-outline" id="downloadSampleBtn" type="button">⬇ Tải đề mẫu (.json) để xem cấu trúc</button>
+          <button class="btn btn-outline" id="cloudLoadExamBtn" type="button">☁ Tải đề thi mới nhất từ Cloud</button>
+        </div>
+        <div class="json-status" id="cloudLoadStatus"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-gold btn-block" id="startGameBtn">Bắt đầu thi ▶</button>
+      </div>
+    </div>
+    <div class="footer-note">Công cụ mô phỏng — không phải sản phẩm chính thức của Đài Truyền hình Việt Nam. Điểm số &amp; luật vòng thi được đơn giản hoá để chạy ổn định ngoài đời thật, do người dẫn chương trình (MC) trực tiếp bấm xác nhận Đúng/Sai sau khi nghe thí sinh trả lời.</div>
+  </div>
+</div>
+
+<!-- ============================= GAME SHELL ============================= -->
+<div class="app-shell game-shell" id="gameShell">
+  <div class="top-bar">
+    <div class="brand-mini">
+      <div class="emblem"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="34" fill="#e7b93a" stroke="#7a5814" stroke-width="2"/></svg></div>
+      <span>OLYMPIA 2026</span>
+    </div>
+    <div class="round-tabs" id="roundTabs"></div>
+    <div class="top-actions">
+      <button class="icon-btn" id="helpBtn" title="Luật chơi">?</button>
+      <button class="icon-btn" id="restartBtn" title="Chơi lại từ đầu">⟲</button>
+    </div>
+  </div>
+
+  <div class="scoreboard" id="scoreboard"></div>
+
+  <div class="stage" id="stage"><!-- round content injected here --></div>
+
+  <div class="footer-note">Mẹo: dùng nút 👁 để ẩn/hiện đáp án trước khi công bố, tránh lộ đáp án cho thí sinh khi chiếu màn hình chung.</div>
+</div>
+
+<!-- ============================= FINAL RESULTS ============================= -->
+<div class="app-shell hidden" id="finalScreen">
+  <div class="final-wrap">
+    <h2 class="setup-title" style="font-size:30px;">🏆 Kết Quả Chung Cuộc</h2>
+    <div class="podium" id="podium"></div>
+    <div class="btn-row" style="justify-content:center; gap:10px;">
+      <button class="btn btn-gold" id="playAgainBtn">Chơi ván mới</button>
+      <button class="btn btn-outline" id="viewLeaderboardBtn" type="button">🏆 Xem bảng xếp hạng Cloud</button>
+    </div>
+    <div class="admin-status-line" id="leaderboardCloudBox" style="white-space:pre-wrap;"></div>
+  </div>
+</div>
+
+<!-- ============================= MODALS ============================= -->
+<div class="modal-overlay" id="helpModal">
+  <div class="modal-box">
+    <h3>Luật chơi (rút gọn cho bản dựng này)</h3>
+    <p><b>1. Khởi động:</b> mỗi thí sinh có một lượt riêng (mặc định 60 giây), trả lời liên tiếp các câu hỏi được rút từ kho câu hỏi chung. Mỗi câu đúng +10 điểm, sai không bị trừ.</p>
+    <p><b>2. Vượt chướng ngại vật:</b> có các hàng ngang gợi ý và một từ khoá bí mật. Ai giành quyền trả lời đúng hàng ngang được cộng điểm của hàng đó. Bất kỳ lúc nào các thí sinh cũng có thể xin đoán từ khoá; đoán sai sẽ mất quyền đoán tiếp ở vòng này (không bị trừ điểm).</p>
+    <p><b>3. Tăng tốc:</b> 4 câu hỏi chung cho tất cả. MC bấm giờ và ghi nhận thứ tự trả lời đúng; trả lời đúng và nhanh nhất được điểm cao nhất theo bảng điểm hiển thị trên màn hình (tự động co giãn theo số thí sinh).</p>
+    <p><b>4. Về đích:</b> lần lượt (thí sinh điểm thấp hơn chọn trước) chọn gói câu hỏi 10/20/30 điểm. Có thể đặt "Ngôi sao hy vọng" một lần duy nhất trong cả trận để nhân đôi điểm được/mất. Nếu người chọn trả lời sai, các thí sinh khác có thể giành quyền trả lời để lấy điểm của gói đó.</p>
+    <p class="small-muted">Toàn bộ phán quyết Đúng/Sai đều do MC bấm tay sau khi nghe câu trả lời — công cụ chỉ hỗ trợ tính điểm, canh giờ và hiển thị câu hỏi.</p>
+    <div class="modal-close-row"><button class="btn btn-outline" data-close="helpModal">Đóng</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box">
+    <h3 id="confirmTitle">Xác nhận</h3>
+    <p id="confirmBody"></p>
+    <div class="modal-close-row" style="gap:10px;">
+      <button class="btn btn-outline" data-close="confirmModal">Huỷ</button>
+      <button class="btn btn-red" id="confirmYesBtn">Đồng ý</button>
+    </div>
+  </div>
+</div>
+
+<button class="admin-fab" id="adminFabBtn" title="Đăng nhập Admin" type="button">🔒</button>
+
+<div class="modal-overlay" id="adminModal">
+  <div class="modal-box">
+    <h3>Khu vực Admin</h3>
+    <div id="adminLoggedOutView">
+      <p class="small-muted">Đăng nhập bằng tài khoản admin để lưu đề thi lên Cloud cho mọi thiết bị khác cùng tải về.</p>
+      <input type="email" id="adminEmail" class="admin-input" placeholder="Email admin" autocomplete="username">
+      <input type="password" id="adminPassword" class="admin-input" placeholder="Mật khẩu" autocomplete="current-password">
+      <button class="btn btn-gold btn-block" id="adminLoginBtn" type="button">Đăng nhập</button>
+      <div class="json-status" id="adminLoginStatus"></div>
+    </div>
+    <div id="adminLoggedInView" class="hidden">
+      <p>Đã đăng nhập admin: <b id="adminEmailLabel"></b></p>
+      <button class="btn btn-outline btn-block" id="cloudSaveExamBtn" type="button" style="margin-bottom:10px;">☁ Lưu đề thi hiện tại lên Cloud</button>
+      <button class="btn btn-red btn-block" id="adminLogoutBtn" type="button">Đăng xuất</button>
+      <div class="json-status" id="adminActionStatus"></div>
+    </div>
+    <div class="modal-close-row"><button class="btn btn-outline" data-close="adminModal">Đóng</button></div>
+  </div>
+</div>
+
+<!-- ============================= FIREBASE ============================= -->
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<script>
+  var firebaseConfig = {
+    apiKey: "AIzaSyDunAp-bJP22sDMJj5Ona3OSQLoDfeNai4",
+    authDomain: "olympia-c6569.firebaseapp.com",
+    databaseURL: "https://olympia-c6569-default-rtdb.firebaseio.com",
+    projectId: "olympia-c6569",
+    storageBucket: "olympia-c6569.firebasestorage.app",
+    messagingSenderId: "356026725718",
+    appId: "1:356026725718:web:a07b2540fec5c8d43192f7",
+    measurementId: "G-NRTXR5XD0Y"
+  };
+  firebase.initializeApp(firebaseConfig);
+  var fbAuth = firebase.auth();
+  var fbDb = firebase.firestore();
+  var ADMIN_EMAILS = ["lamproandvip@gmail.com", "nguyenlam.tbump@gmail.com"];
+</script>
+
+<script>
+(function(){
+"use strict";
+
+/* ============================================================
+   0. HẰNG SỐ & DỮ LIỆU MẪU
+   ============================================================ */
+var PLAYER_COLORS = ["#e7b93a","#4fb8e0","#e9585d","#57cf78"];
+var MAX_PLAYERS = 4, MIN_PLAYERS = 2;
+
+var SAMPLE_DATA = {
+  meta:{ title:"Đề mẫu demo", note:"Bộ đề nhỏ để thử toàn bộ 4 vòng thi." },
+  khoiDong:{
+    questionsPerPlayer:4,
+    secondsPerPlayer:60,
+    pool:[
+      {question:"Thủ đô của Việt Nam là gì?", answer:"Hà Nội", subject:"Địa lý"},
+      {question:"7 x 8 bằng bao nhiêu?", answer:"56", subject:"Toán"},
+      {question:"Ai là tác giả của Truyện Kiều?", answer:"Nguyễn Du", subject:"Ngữ văn"},
+      {question:"Nước nào có diện tích lớn nhất thế giới?", answer:"Nga (Liên bang Nga)", subject:"Địa lý"},
+      {question:"Công thức hoá học của nước là gì?", answer:"H2O", subject:"Hoá học"},
+      {question:"Đơn vị đo cường độ dòng điện là gì?", answer:"Ampe (A)", subject:"Vật lý"},
+      {question:"Ai là chủ tịch nước đầu tiên của Việt Nam?", answer:"Hồ Chí Minh", subject:"Lịch sử"},
+      {question:"1 giờ có bao nhiêu phút?", answer:"60 phút", subject:"Toán"},
+      {question:"Hành tinh nào gần Mặt Trời nhất?", answer:"Sao Thuỷ", subject:"Vật lý"},
+      {question:"Sông dài nhất Việt Nam là sông nào?", answer:"Sông Mê Kông (đoạn qua VN gọi Cửu Long)", subject:"Địa lý"},
+      {question:"Ai vẽ bức tranh Mona Lisa?", answer:"Leonardo da Vinci", subject:"Mỹ thuật"},
+      {question:"Số nguyên tố nhỏ nhất là số nào?", answer:"2", subject:"Toán"},
+      {question:"Bộ phận nào của cây thực hiện quang hợp chính?", answer:"Lá cây", subject:"Sinh học"},
+      {question:"Việt Nam gia nhập ASEAN năm nào?", answer:"1995", subject:"Lịch sử"},
+      {question:"Kim loại nào nhẹ nhất?", answer:"Liti", subject:"Hoá học"},
+      {question:"Tác phẩm 'Chí Phèo' là của nhà văn nào?", answer:"Nam Cao", subject:"Ngữ văn"}
+    ]
+  },
+  vuotChuongNgaiVat:{
+    keyword:"TỰ HỌC",
+    keywordHint:"Từ khoá gồm 6 chữ cái, liên quan đến tinh thần chủ động chiếm lĩnh tri thức.",
+    rows:[
+      {clue:"Loại hình học tập không cần đến trường lớp, tự tìm tòi kiến thức.", answer:"Tự học", points:10},
+      {clue:"Nơi lưu trữ sách để tra cứu, nghiên cứu.", answer:"Thư viện", points:10},
+      {clue:"Hoạt động ghi chép lại kiến thức đã học.", answer:"Ghi chú", points:10},
+      {clue:"Kỹ năng cần có để hiểu văn bản khi tự đọc.", answer:"Đọc hiểu", points:10}
+    ]
+  },
+  tangToc:{
+    questions:[
+      {question:"Sắp xếp lại để được một quốc gia: 'A N H T A I L A N'.", answer:"Thái Lan", explain:"Đảo chữ đơn giản."},
+      {question:"Đây là hình gì nếu có 3 cạnh bằng nhau và 3 góc bằng nhau?", answer:"Tam giác đều", explain:"Định nghĩa tam giác đều."},
+      {question:"Quan sát chuỗi ảnh gợi ý (chạy liên tiếp) rồi cho biết: đây là chủ đề gì?", answer:"Phong cảnh thiên nhiên", explain:"Ví dụ minh hoạ định dạng ảnh chạy liên tiếp — hãy thay các URL này bằng ảnh thật liên quan tới câu hỏi thực tế của bạn.",
+        images:[
+          {url:"https://picsum.photos/id/1015/900/600", caption:"Gợi ý 1", durationMs:2500},
+          {url:"https://picsum.photos/id/1018/900/600", caption:"Gợi ý 2", durationMs:2500},
+          {url:"https://picsum.photos/id/1043/900/600", caption:"Gợi ý 3", durationMs:2500}
+        ]},
+      {question:"12 chia 4 rồi cộng 5 bằng bao nhiêu?", answer:"8", explain:"12/4=3, 3+5=8."}
+    ]
+  },
+  veDich:{
+    packages:{
+      "10":[
+        {question:"Số chẵn nhỏ nhất lớn hơn 0 là số nào?", answer:"2"},
+        {question:"Việt Nam có bao nhiêu miền địa lý chính (Bắc - Trung - Nam)?", answer:"3 miền"},
+        {question:"Đơn vị tiền tệ của Nhật Bản là gì?", answer:"Yên (Yen)"},
+        {question:"1 km bằng bao nhiêu mét?", answer:"1000 mét"}
+      ],
+      "20":[
+        {question:"Ai là tác giả thuyết tương đối?", answer:"Albert Einstein"},
+        {question:"Bộ Ngoại giao Việt Nam đặt trụ sở chính ở đâu?", answer:"Hà Nội"},
+        {question:"Chất khí chiếm phần lớn khí quyển Trái Đất là gì?", answer:"Nitơ (N2)"},
+        {question:"'Nhật ký trong tù' là tác phẩm của ai?", answer:"Hồ Chí Minh"}
+      ],
+      "30":[
+        {question:"Định luật bảo toàn năng lượng phát biểu điều gì (nêu ý chính)?", answer:"Năng lượng không tự sinh ra hoặc mất đi, chỉ chuyển hoá từ dạng này sang dạng khác."},
+        {question:"Trận Điện Biên Phủ kết thúc vào năm nào?", answer:"1954"},
+        {question:"Phương trình bậc hai có dạng tổng quát nào?", answer:"ax² + bx + c = 0 (a ≠ 0)"},
+        {question:"Ai là người đặt nền móng cho học thuyết tiến hoá?", answer:"Charles Darwin"}
+      ]
+    }
+  }
+};
+
+/* ============================================================
+   1. STATE
+   ============================================================ */
+var state = {
+  players: [],              // {name, score, starUsed}
+  data: null,                // dữ liệu đề thi đang dùng
+  round: 0,                  // 0=chưa bắt đầu,1..4
+  roundsDone: {1:false,2:false,3:false,4:false},
+
+  kd: { poolPtr:0, playerIdx:0, secondsPerPlayer:60, questionsPerPlayer:6, timeLeft:0, timerId:null, running:false, currentQ:null, answeredCount:0 },
+  vcnv: { rows:[], solvedCount:0, guessLocked:{}, activeRowIdx:null, keywordSolved:false },
+  tt: { qIdx:0, order:[], timerId:null, timeLeft:0, running:false, results:[], imgTimerId:null /* per question: {playerIdx,timeUsed,correct} */ },
+  vd: { turnQueue:[], turnPtr:0, turnsPerPlayer:2, turnsDone:{}, activePick:null /* {value, question, playerIdx, starActive} */, packagesUsed:{"10":0,"20":0,"30":0} }
+};
+
+var audioCtx = null;
+function beep(freq, dur, vol){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.frequency.value = freq||880; o.type="sine";
+    g.gain.value = vol||0.06;
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime + (dur||0.12));
+  }catch(e){ /* audio not available, ignore */ }
+}
+function tick(){ beep(700,.07,.05); }
+function ding(){ beep(1050,.15,.08); }
+function buzz(){ beep(180,.35,.09); }
+
+/* ============================================================
+   2. HELPERS
+   ============================================================ */
+function $(id){ return document.getElementById(id); }
+function el(tag, cls, html){ var e=document.createElement(tag); if(cls) e.className=cls; if(html!==undefined) e.innerHTML=html; return e; }
+function shuffle(arr){ arr=arr.slice(); for(var i=arr.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=arr[i]; arr[i]=arr[j]; arr[j]=t;} return arr; }
+function poolItem(pool, ptr){ if(!pool || !pool.length) return null; return pool[ptr % pool.length]; }
+function fmtTime(s){ s=Math.max(0,Math.round(s)); var m=Math.floor(s/60), sec=s%60; return (m>0? m+":" + (sec<10?"0":"")+sec : ""+sec); }
+
+function openModal(id){ $(id).classList.add("open"); }
+function closeModal(id){ $(id).classList.remove("open"); }
+document.addEventListener("click", function(e){
+  if(e.target.matches("[data-close]")) closeModal(e.target.getAttribute("data-close"));
+  if(e.target.classList.contains("modal-overlay")) e.target.classList.remove("open");
+});
+$("helpBtn").addEventListener("click", function(){ openModal("helpModal"); });
+
+function confirmAction(title, body, onYes){
+  $("confirmTitle").textContent = title;
+  $("confirmBody").textContent = body;
+  openModal("confirmModal");
+  var yesBtn = $("confirmYesBtn");
+  var handler = function(){ closeModal("confirmModal"); yesBtn.removeEventListener("click", handler); onYes(); };
+  yesBtn.addEventListener("click", handler);
+}
+$("restartBtn").addEventListener("click", function(){
+  confirmAction("Chơi lại từ đầu?", "Toàn bộ điểm số và tiến trình hiện tại sẽ mất.", function(){ location.reload(); });
+});
+
+/* ============================================================
+   3. SETUP SCREEN
+   ============================================================ */
+var setupState = { count:4, names:["","","",""] };
+
+function renderCountRow(){
+  var row = $("countRow"); row.innerHTML = "";
+  for(var n=MIN_PLAYERS;n<=MAX_PLAYERS;n++){
+    (function(n){
+      var b = el("button","count-btn"+(setupState.count===n?" active":""), n+" người");
+      b.type="button";
+      b.addEventListener("click", function(){ setupState.count=n; renderCountRow(); renderNameGrid(); });
+      row.appendChild(b);
+    })(n);
+  }
+}
+function renderNameGrid(){
+  var grid = $("nameGrid"); grid.innerHTML="";
+  for(var i=0;i<setupState.count;i++){
+    (function(i){
+      var wrap = el("div","name-field");
+      var lbl = el("label", null, '<span class="color-dot" style="background:'+PLAYER_COLORS[i]+'"></span>Thí sinh '+(i+1));
+      var inp = document.createElement("input");
+      inp.placeholder = "Nhập tên thí sinh "+(i+1);
+      inp.value = setupState.names[i] || "";
+      inp.addEventListener("input", function(){ setupState.names[i]=inp.value; });
+      wrap.appendChild(lbl); wrap.appendChild(inp);
+      grid.appendChild(wrap);
+    })(i);
+  }
+}
+renderCountRow(); renderNameGrid();
+
+/* data source tabs */
+var dataMode = "sample";
+document.querySelectorAll(".data-tab").forEach(function(tabBtn){
+  tabBtn.addEventListener("click", function(){
+    document.querySelectorAll(".data-tab").forEach(function(t){t.classList.remove("active");});
+    tabBtn.classList.add("active");
+    dataMode = tabBtn.getAttribute("data-tab");
+    ["sample","paste","file"].forEach(function(m){ $("panel-"+m).classList.toggle("hidden", m!==dataMode); });
+    $("jsonStatus").className = "json-status";
+  });
+});
+$("downloadSampleBtn").addEventListener("click", function(){
+  var blob = new Blob([JSON.stringify(SAMPLE_DATA,null,2)], {type:"application/json"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "de-mau-olympia-2026.json"; a.click();
+});
+
+function showJsonStatus(ok, msg){
+  var s = $("jsonStatus");
+  s.className = "json-status " + (ok?"ok":"err");
+  s.textContent = msg;
+}
+
+/* validate cấu trúc JSON đề thi tối thiểu */
+function validateExamData(d){
+  var errs = [];
+  if(!d || typeof d !== "object") return ["JSON không hợp lệ (không phải object)."];
+  if(!d.khoiDong || !Array.isArray(d.khoiDong.pool) || d.khoiDong.pool.length < 4){
+    errs.push("khoiDong.pool cần là mảng có ít nhất 4 câu hỏi.");
+  } else {
+    d.khoiDong.pool.forEach(function(q,i){ if(!q.question || !q.answer) errs.push("khoiDong.pool["+i+"] thiếu question hoặc answer."); });
+  }
+  if(!d.vuotChuongNgaiVat || !d.vuotChuongNgaiVat.keyword || !Array.isArray(d.vuotChuongNgaiVat.rows) || d.vuotChuongNgaiVat.rows.length < 3){
+    errs.push("vuotChuongNgaiVat cần có keyword và ít nhất 3 rows.");
+  } else {
+    d.vuotChuongNgaiVat.rows.forEach(function(r,i){ if(!r.clue || !r.answer) errs.push("vuotChuongNgaiVat.rows["+i+"] thiếu clue hoặc answer."); });
+  }
+  if(!d.tangToc || !Array.isArray(d.tangToc.questions) || d.tangToc.questions.length < 4){
+    errs.push("tangToc.questions cần là mảng có đúng/ít nhất 4 câu hỏi.");
+  } else {
+    d.tangToc.questions.forEach(function(q,i){
+      if(q.images !== undefined){
+        if(!Array.isArray(q.images) || q.images.length===0){
+          errs.push("tangToc.questions["+i+"].images nếu có phải là mảng ít nhất 1 ảnh {url, caption?, durationMs?}.");
+        } else {
+          q.images.forEach(function(im,j){ if(!im || !im.url) errs.push("tangToc.questions["+i+"].images["+j+"] thiếu url."); });
+        }
+      }
+    });
+  }
+  if(!d.veDich || !d.veDich.packages || !d.veDich.packages["10"] || !d.veDich.packages["20"] || !d.veDich.packages["30"]){
+    errs.push("veDich.packages cần có đủ 3 khoá '10', '20', '30', mỗi khoá là mảng câu hỏi.");
+  }
+  return errs;
+}
+
+function tryLoadJSON(text){
+  var parsed;
+  try{ parsed = JSON.parse(text); }
+  catch(e){ showJsonStatus(false, "Lỗi cú pháp JSON: "+e.message); return null; }
+  var errs = validateExamData(parsed);
+  if(errs.length){ showJsonStatus(false, "Đề thi thiếu dữ liệu bắt buộc:\n• "+errs.join("\n• ")); return null; }
+  showJsonStatus(true, "✓ Đề thi hợp lệ — đã nạp thành công ("+parsed.khoiDong.pool.length+" câu khởi động, "+parsed.tangToc.questions.length+" câu tăng tốc).");
+  return parsed;
+}
+
+$("jsonFile").addEventListener("change", function(e){
+  var f = e.target.files[0]; if(!f) return;
+  var reader = new FileReader();
+  reader.onload = function(){ tryLoadJSON(reader.result); };
+  reader.readAsText(f);
+});
+
+$("startGameBtn").addEventListener("click", function(){
+  // build players
+  var names = [];
+  for(var i=0;i<setupState.count;i++){ names.push((setupState.names[i]||"").trim() || ("Thí sinh "+(i+1))); }
+
+  var data = null;
+  if(dataMode === "sample"){
+    data = SAMPLE_DATA;
+  } else if(dataMode === "paste"){
+    var txt = $("jsonPaste").value.trim();
+    if(!txt){ showJsonStatus(false,"Vui lòng dán nội dung JSON trước khi bắt đầu."); return; }
+    data = tryLoadJSON(txt);
+    if(!data) return;
+  } else if(dataMode === "file"){
+    var f = $("jsonFile").files[0];
+    if(!f){ showJsonStatus(false,"Vui lòng chọn một file .json trước khi bắt đầu."); return; }
+    var reader = new FileReader();
+    reader.onload = function(){
+      var d = tryLoadJSON(reader.result);
+      if(d) launchGame(names, d);
+    };
+    reader.readAsText(f);
+    return; // async path, launch happens in callback
+  }
+  launchGame(names, data);
+});
+
+function launchGame(names, data){
+  state.players = names.map(function(n,i){ return {name:n, score:0, starUsed:false, color:PLAYER_COLORS[i]}; });
+  state.data = data;
+  state.kd.questionsPerPlayer = (data.khoiDong.questionsPerPlayer)||6;
+  state.kd.secondsPerPlayer = (data.khoiDong.secondsPerPlayer)||60;
+
+  $("setupScreen").classList.add("hidden");
+  $("gameShell").classList.add("active");
+  renderRoundTabs();
+  renderScoreboard();
+  goToRound(1);
+}
+
+/* ============================================================
+   4. TOP BAR: ROUND TABS + SCOREBOARD
+   ============================================================ */
+var ROUND_NAMES = {1:"Khởi động", 2:"Vượt chướng ngại vật", 3:"Tăng tốc", 4:"Về đích"};
+
+function renderRoundTabs(){
+  var wrap = $("roundTabs"); wrap.innerHTML="";
+  [1,2,3,4].forEach(function(r){
+    var b = el("button","round-tab"+(state.round===r?" current":"")+(state.roundsDone[r]?" done":""), (r)+". "+ROUND_NAMES[r]);
+    b.type="button";
+    // cho phép quay lại vòng trước để xem, nhưng không cho nhảy cóc vòng chưa mở khoá
+    var locked = r > state.round && !state.roundsDone[r];
+    b.disabled = locked && r !== state.round+1 ? true : (r > state.round+1);
+    b.addEventListener("click", function(){
+      if(r <= state.round || state.roundsDone[r] || r === state.round){ goToRound(r); }
+      else if(r === state.round+1){
+        confirmAction("Chuyển sang vòng "+ROUND_NAMES[r]+"?", "Vòng thi hiện tại sẽ được đánh dấu hoàn thành.", function(){
+          state.roundsDone[state.round]=true; goToRound(r);
+        });
+      }
+    });
+    wrap.appendChild(b);
+  });
+}
+
+function renderScoreboard(){
+  var wrap = $("scoreboard"); wrap.innerHTML="";
+  var turnIdx = currentTurnPlayerIdx();
+  state.players.forEach(function(p, i){
+    var card = el("div","score-card"+(turnIdx===i?" turn":""));
+    var bar = el("div","bar"); bar.style.background = p.color;
+    var name = el("div","pname", p.name + (p.starUsed?' <span class="star-icon" title="Đã dùng ngôi sao hy vọng">★</span>':""));
+    var score = el("div","pscore", p.score);
+    var tag = el("div","ptag", turnIdx===i ? "Đang thi" : "");
+    card.appendChild(bar); card.appendChild(name); card.appendChild(score); card.appendChild(tag);
+    wrap.appendChild(card);
+  });
+}
+function currentTurnPlayerIdx(){
+  if(state.round===1) return state.kd.playerIdx;
+  if(state.round===4 && state.vd.activePick) return state.vd.activePick.playerIdx;
+  if(state.round===4 && state.vd.turnQueue.length) return state.vd.turnQueue[state.vd.turnPtr % state.vd.turnQueue.length];
+  return -1;
+}
+function addScore(playerIdx, delta){
+  state.players[playerIdx].score += delta;
+  renderScoreboard();
+}
+
+/* ============================================================
+   5. ROUND ROUTER
+   ============================================================ */
+function goToRound(r){
+  if(state.round === 3 && r !== 3) clearTTImageTimer();
+  state.round = r;
+  renderRoundTabs();
+  renderScoreboard();
+  if(r===1) renderKhoiDong();
+  if(r===2) renderVCNV();
+  if(r===3) renderTangToc();
+  if(r===4) renderVeDich();
+}
+
+/* ============================================================
+   6. VÒNG 1 — KHỞI ĐỘNG
+   ============================================================ */
+function renderKhoiDong(){
+  clearInterval(state.kd.timerId);
+  var stage = $("stage"); stage.innerHTML="";
+  var head = el("div","stage-head");
+  head.appendChild(el("div", null,
+    '<div class="stage-title">Vòng 1 · Khởi động</div>'+
+    '<div class="stage-desc">Mỗi thí sinh có '+state.kd.secondsPerPlayer+' giây để trả lời liên tiếp các câu hỏi. Mỗi câu đúng +10 điểm.</div>'));
+  var timerWrap = el("div","timer-ring-wrap");
+  timerWrap.innerHTML = '<div class="timer-num" id="kdTimerNum">'+state.kd.secondsPerPlayer+'</div>';
+  head.appendChild(timerWrap);
+  stage.appendChild(head);
+
+  var body = el("div");
+  var curP = state.players[state.kd.playerIdx];
+  body.appendChild(el("div","small-muted", "Lượt hiện tại: <b style='color:var(--gold-300)'>"+curP.name+"</b> ("+(state.kd.playerIdx+1)+"/"+state.players.length+")"));
+
+  var qBox = el("div","question-box", '<span class="small-muted">Bấm "Bắt đầu lượt" để hiển thị câu hỏi đầu tiên.</span>');
+  qBox.id = "kdQBox";
+  body.appendChild(qBox);
+
+  var judge = el("div","judge-row");
+  judge.innerHTML =
+    '<button class="btn btn-green" id="kdRightBtn" disabled>✓ Trả lời đúng (+10)</button>'+
+    '<button class="btn btn-red" id="kdWrongBtn" disabled>✗ Trả lời sai</button>'+
+    '<button class="btn btn-outline" id="kdNextQBtn" disabled>Câu tiếp theo »</button>';
+  body.appendChild(judge);
+
+  var controls = el("div","turn-controls");
+  controls.innerHTML =
+    '<button class="btn btn-gold" id="kdStartTurnBtn">▶ Bắt đầu lượt của '+curP.name+'</button>'+
+    '<button class="btn btn-outline" id="kdSkipPlayerBtn">Bỏ qua, sang thí sinh kế »</button>';
+  body.appendChild(controls);
+
+  stage.appendChild(body);
+
+  $("kdStartTurnBtn").addEventListener("click", startKDTurn);
+  $("kdSkipPlayerBtn").addEventListener("click", function(){ nextKDPlayer(); });
+  $("kdRightBtn").addEventListener("click", function(){ judgeKD(true); });
+  $("kdWrongBtn").addEventListener("click", function(){ judgeKD(false); });
+  $("kdNextQBtn").addEventListener("click", showNextKDQuestion);
+}
+
+function startKDTurn(){
+  state.kd.timeLeft = state.kd.secondsPerPlayer;
+  state.kd.running = true;
+  state.kd.answeredCount = 0;
+  $("kdStartTurnBtn").disabled = true;
+  showNextKDQuestion();
+  state.kd.timerId = setInterval(function(){
+    state.kd.timeLeft--;
+    var numEl = $("kdTimerNum");
+    if(numEl){ numEl.textContent = state.kd.timeLeft; numEl.classList.toggle("warn", state.kd.timeLeft<=10); }
+    if(state.kd.timeLeft<=10 && state.kd.timeLeft>0) tick();
+    if(state.kd.timeLeft<=0){
+      clearInterval(state.kd.timerId);
+      state.kd.running = false;
+      buzz();
+      endKDTurn();
+    }
+  }, 1000);
+}
+function showNextKDQuestion(){
+  if(!state.kd.running) return;
+  var pool = state.data.khoiDong.pool;
+  var q = poolItem(pool, state.kd.poolPtr);
+  state.kd.poolPtr++;
+  state.kd.currentQ = q;
+  var box = $("kdQBox");
+  if(box){
+    box.innerHTML = (q.subject? '<div><span class="subject-chip">'+q.subject+'</span><br>':'<div>') +
+      escapeHTML(q.question) +
+      '<div class="answer-spoiler"><div class="lbl">Đáp án (ẩn)</div>'+
+      '<div class="answer-text" id="kdAnsText">'+escapeHTML(q.answer)+'</div>'+
+      '<div class="reveal-toggle"><button class="btn btn-outline" id="kdRevealBtn" type="button">👁 Hiện đáp án</button></div></div></div>';
+    $("kdRevealBtn").addEventListener("click", function(){ $("kdAnsText").classList.toggle("revealed"); });
+  }
+  $("kdRightBtn").disabled = false; $("kdWrongBtn").disabled = false; $("kdNextQBtn").disabled = false;
+}
+function judgeKD(correct){
+  if(correct){ addScore(state.kd.playerIdx, 10); ding(); }
+  state.kd.answeredCount++;
+  if(state.kd.running) showNextKDQuestion();
+}
+function endKDTurn(){
+  $("kdRightBtn").disabled = true; $("kdWrongBtn").disabled = true; $("kdNextQBtn").disabled = true;
+  var box = $("kdQBox");
+  if(box) box.insertAdjacentHTML("beforeend", '<div style="margin-top:10px;color:var(--red-600);font-weight:800;">⏱ Hết giờ!</div>');
+  var controls = document.querySelector(".turn-controls");
+  if(controls) controls.innerHTML = '<button class="btn btn-gold" id="kdGoNextBtn">Thí sinh tiếp theo »</button>';
+  var gb = $("kdGoNextBtn"); if(gb) gb.addEventListener("click", nextKDPlayer);
+}
+function nextKDPlayer(){
+  clearInterval(state.kd.timerId);
+  state.kd.playerIdx++;
+  if(state.kd.playerIdx >= state.players.length){
+    state.roundsDone[1]=true;
+    finishRoundBanner("Đã hoàn thành phần thi của tất cả thí sinh ở vòng Khởi động.", 2);
+  } else {
+    renderKhoiDong();
+  }
+}
+function finishRoundBanner(msg, nextRound){
+  var stage = $("stage");
+  stage.innerHTML = '<div class="stage-head"><div><div class="stage-title">Hoàn thành vòng thi</div>'+
+    '<div class="stage-desc">'+msg+'</div></div></div>'+
+    '<button class="btn btn-gold" id="advanceBtn">Chuyển sang Vòng '+nextRound+'. '+ROUND_NAMES[nextRound]+' »</button>'+
+    (nextRound>4 ? '' : '');
+  renderRoundTabs();
+  var btn = $("advanceBtn");
+  if(btn) btn.addEventListener("click", function(){ goToRound(nextRound); });
+}
+function escapeHTML(s){ return String(s==null?"":s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+
+/* ============================================================
+   7. VÒNG 2 — VƯỢT CHƯỚNG NGẠI VẬT
+   ============================================================ */
+function renderVCNV(){
+  var v = state.data.vuotChuongNgaiVat;
+  if(!state.vcnv.initDone){
+    state.vcnv.rows = v.rows.map(function(r){ return {clue:r.clue, answer:r.answer, points:r.points||10, status:"locked"}; });
+    state.vcnv.solvedCount = 0;
+    state.vcnv.keywordSolved = false;
+    state.vcnv.lockedGuessers = {};
+    state.vcnv.initDone = true;
+  }
+  var stage = $("stage"); stage.innerHTML="";
+  stage.appendChild(el("div","stage-head",
+    '<div><div class="stage-title">Vòng 2 · Vượt chướng ngại vật</div>'+
+    '<div class="stage-desc">Chọn một hàng ngang để đọc gợi ý, hoặc bấm "Đoán từ khoá" bất cứ lúc nào. '+(v.keywordHint? escapeHTML(v.keywordHint):'')+'</div></div>'));
+
+  var wrap = el("div","vcnv-wrap");
+  var rowsCol = el("div","vcnv-rows");
+  state.vcnv.rows.forEach(function(r, idx){
+    var btn = el("button", "vcnv-row-btn"+(r.status==="solved"?" solved":r.status==="missed"?" missed":""),
+      '<span>Hàng ngang '+(idx+1)+'</span><span>'+(r.status==="locked" ? r.points+"đ" : (r.status==="solved"?"✓ "+escapeHTML(r.answer):"— bỏ qua"))+'</span>');
+    btn.disabled = r.status !== "locked";
+    btn.addEventListener("click", function(){ openVCNVRow(idx); });
+    rowsCol.appendChild(btn);
+  });
+  wrap.appendChild(rowsCol);
+
+  var kwCard = el("div","vcnv-keyword-card");
+  var blanks = state.vcnv.keywordSolved ? v.keyword.toUpperCase() : v.keyword.replace(/[^\s]/g,"•");
+  kwCard.innerHTML = '<div class="small-muted">TỪ KHOÁ BÍ MẬT</div>'+
+    '<div class="vcnv-keyword-blanks">'+escapeHTML(blanks)+'</div>'+
+    '<div class="vcnv-progress">Đã mở '+state.vcnv.solvedCount+'/'+state.vcnv.rows.length+' hàng ngang</div>'+
+    (state.vcnv.keywordSolved ? '' : '<button class="btn btn-gold" id="vcnvGuessBtn">🔑 Đoán từ khoá</button>');
+  wrap.appendChild(kwCard);
+  stage.appendChild(wrap);
+
+  if(!state.vcnv.keywordSolved){
+    var gb = $("vcnvGuessBtn");
+    if(gb) gb.addEventListener("click", openKeywordGuess);
+  }
+
+  var doneRows = state.vcnv.rows.every(function(r){ return r.status!=="locked"; });
+  if(doneRows || state.vcnv.keywordSolved){
+    var advWrap = el("div","turn-controls");
+    advWrap.innerHTML = '<button class="btn btn-gold" id="vcnvAdvanceBtn">Kết thúc vòng, sang Vòng 3. Tăng tốc »</button>';
+    stage.appendChild(advWrap);
+    $("vcnvAdvanceBtn").addEventListener("click", function(){ state.roundsDone[2]=true; goToRound(3); });
+  }
+}
+
+function openVCNVRow(idx){
+  var row = state.vcnv.rows[idx];
+  var stage = $("stage");
+  var box = el("div","question-box");
+  box.innerHTML = '<div style="width:100%"><span class="subject-chip">Hàng ngang '+(idx+1)+' · '+row.points+' điểm</span><br>'+
+    escapeHTML(row.clue)+
+    '<div class="answer-spoiler"><div class="lbl">Đáp án (ẩn)</div>'+
+    '<div class="answer-text" id="vcnvAnsText">'+escapeHTML(row.answer)+'</div>'+
+    '<div class="reveal-toggle"><button class="btn btn-outline" id="vcnvRevealBtn" type="button">👁 Hiện đáp án</button></div></div>'+
+    '<div style="margin-top:12px;">Ai giành quyền trả lời?</div>'+
+    '<div class="steal-list" id="vcnvPlayerPick"></div>'+
+    '<div class="judge-row"><button class="btn btn-green" id="vcnvRightBtn" disabled>✓ Đúng</button><button class="btn btn-red" id="vcnvWrongBtn" disabled>✗ Sai / không ai trả lời</button></div>'+
+    '</div>';
+  // chèn hộp câu hỏi ngay sau phần đầu vòng thi (trước khu vực các hàng ngang) để MC thao tác
+  stage.insertBefore(box, stage.children[1] || null);
+
+  $("vcnvRevealBtn").addEventListener("click", function(){ $("vcnvAnsText").classList.toggle("revealed"); });
+  var pickWrap = $("vcnvPlayerPick"); var chosen = null;
+  state.players.forEach(function(p,i){
+    var chip = el("button","steal-chip", p.name);
+    chip.type="button";
+    chip.addEventListener("click", function(){
+      chosen = i;
+      pickWrap.querySelectorAll(".steal-chip").forEach(function(c){c.classList.remove("picked");});
+      chip.classList.add("picked");
+      $("vcnvRightBtn").disabled = false; $("vcnvWrongBtn").disabled = false;
+    });
+    pickWrap.appendChild(chip);
+  });
+  $("vcnvRightBtn").addEventListener("click", function(){
+    if(chosen===null) return;
+    row.status="solved"; state.vcnv.solvedCount++;
+    addScore(chosen, row.points); ding();
+    renderVCNV();
+  });
+  $("vcnvWrongBtn").addEventListener("click", function(){
+    row.status="missed"; state.vcnv.solvedCount++;
+    buzz();
+    renderVCNV();
+  });
+}
+
+function openKeywordGuess(){
+  var v = state.data.vuotChuongNgaiVat;
+  var stage = $("stage");
+  var box = el("div","question-box");
+  box.innerHTML = '<div style="width:100%">Ai đoán từ khoá?'+
+    '<div class="steal-list" id="kwPlayerPick"></div>'+
+    '<div class="small-muted" style="margin-top:8px;">Gợi ý: '+escapeHTML(v.keywordHint||"")+'</div>'+
+    '<div class="answer-spoiler"><div class="lbl">Đáp án đúng (ẩn)</div>'+
+    '<div class="answer-text" id="kwAnsText">'+escapeHTML(v.keyword)+'</div>'+
+    '<div class="reveal-toggle"><button class="btn btn-outline" id="kwRevealBtn" type="button">👁 Hiện đáp án</button></div></div>'+
+    '<div class="judge-row"><button class="btn btn-green" id="kwRightBtn" disabled>✓ Đúng (+30)</button><button class="btn btn-red" id="kwWrongBtn" disabled>✗ Sai (mất quyền đoán tiếp)</button></div>'+
+    '</div>';
+  stage.insertBefore(box, stage.children[1]);
+  $("kwRevealBtn").addEventListener("click", function(){ $("kwAnsText").classList.toggle("revealed"); });
+  var chosen = null; var pickWrap = $("kwPlayerPick");
+  state.players.forEach(function(p,i){
+    if(state.vcnv.lockedGuessers[i]) return;
+    var chip = el("button","steal-chip", p.name);
+    chip.type="button";
+    chip.addEventListener("click", function(){
+      chosen=i;
+      pickWrap.querySelectorAll(".steal-chip").forEach(function(c){c.classList.remove("picked");});
+      chip.classList.add("picked");
+      $("kwRightBtn").disabled=false; $("kwWrongBtn").disabled=false;
+    });
+    pickWrap.appendChild(chip);
+  });
+  $("kwRightBtn").addEventListener("click", function(){
+    if(chosen===null) return;
+    var basePts = Math.max(10, 40 - state.vcnv.solvedCount*10);
+    state.vcnv.keywordSolved = true;
+    addScore(chosen, basePts); ding();
+    renderVCNV();
+  });
+  $("kwWrongBtn").addEventListener("click", function(){
+    if(chosen===null) return;
+    state.vcnv.lockedGuessers[chosen]=true;
+    buzz();
+    renderVCNV();
+  });
+}
+
+/* ============================================================
+   8. VÒNG 3 — TĂNG TỐC
+   ============================================================ */
+function hasTTImages(q){ return q && Array.isArray(q.images) && q.images.length > 0; }
+
+function clearTTImageTimer(){
+  if(state.tt.imgTimerId){ clearTimeout(state.tt.imgTimerId); state.tt.imgTimerId = null; }
+}
+
+/* Xây khối phát chuỗi ảnh gợi ý chạy liên tiếp (ảnh thật, dạng URL trực tiếp) cho vòng Tăng tốc */
+function buildTTImageSlideshow(images){
+  var wrap = el("div","tt-img-stage");
+  var frame = el("div","tt-img-frame");
+  var imgEl = document.createElement("img");
+  imgEl.className = "tt-img-el";
+  imgEl.alt = "Hình ảnh gợi ý";
+  var fallback = el("div","tt-img-fallback","");
+  frame.appendChild(imgEl);
+  frame.appendChild(fallback);
+  wrap.appendChild(frame);
+
+  var dotsWrap = el("div","progress-dots");
+  images.forEach(function(){ dotsWrap.appendChild(el("div","dot")); });
+  wrap.appendChild(dotsWrap);
+
+  var counter = el("div","small-muted tt-img-counter","Ảnh 1/"+images.length);
+  wrap.appendChild(counter);
+
+  var controls = el("div","tt-img-controls");
+  var playBtn = el("button","btn btn-gold","▶ Chạy ảnh");
+  var replayBtn = el("button","btn btn-outline","⟲ Chạy lại từ đầu");
+  var skipBtn = el("button","btn btn-outline","⏭ Hiện ảnh cuối");
+  controls.appendChild(playBtn); controls.appendChild(replayBtn); controls.appendChild(skipBtn);
+  wrap.appendChild(controls);
+
+  var idx = 0;
+
+  function showSlide(i){
+    idx = i;
+    var im = images[i] || {};
+    imgEl.style.display = "block";
+    fallback.style.display = "none";
+    imgEl.src = im.url || "";
+    imgEl.onerror = function(){
+      imgEl.style.display = "none";
+      fallback.style.display = "flex";
+      fallback.textContent = "🖼️ Không tải được ảnh "+(i+1)+(im.caption ? " — gợi ý: "+im.caption : " (kiểm tra lại đường link ảnh trong đề)");
+    };
+    Array.prototype.forEach.call(dotsWrap.children, function(d, di){ d.classList.toggle("done", di<=i); });
+    counter.textContent = "Ảnh "+(i+1)+"/"+images.length + (im.caption ? " — "+im.caption : "");
+  }
+
+  function playFrom(i){
+    clearTTImageTimer();
+    if(i >= images.length){ playBtn.textContent = "▶ Chạy ảnh"; return; }
+    showSlide(i);
+    var dur = (images[i] && images[i].durationMs) || 2500;
+    state.tt.imgTimerId = setTimeout(function(){ playFrom(i+1); }, dur);
+  }
+
+  playBtn.addEventListener("click", function(){
+    if(state.tt.imgTimerId){
+      clearTTImageTimer();
+      playBtn.textContent = "▶ Tiếp tục";
+      return;
+    }
+    playBtn.textContent = "⏸ Đang chạy…";
+    playFrom(idx >= images.length-1 ? 0 : idx);
+  });
+  replayBtn.addEventListener("click", function(){
+    playBtn.textContent = "⏸ Đang chạy…";
+    playFrom(0);
+  });
+  skipBtn.addEventListener("click", function(){
+    clearTTImageTimer();
+    playBtn.textContent = "▶ Chạy ảnh";
+    showSlide(images.length-1);
+  });
+
+  showSlide(0);
+  return wrap;
+}
+
+function renderTangToc(){
+  var questions = state.data.tangToc.questions;
+  clearTTImageTimer();
+  if(state.tt.qIdx >= questions.length){
+    state.roundsDone[3]=true;
+    finishRoundBanner("Đã hoàn thành cả "+questions.length+" câu hỏi Tăng tốc.", 4);
+    return;
+  }
+  var q = questions[state.tt.qIdx];
+  var stage = $("stage"); stage.innerHTML="";
+  stage.appendChild(el("div","stage-head",
+    '<div><div class="stage-title">Vòng 3 · Tăng tốc — Câu '+(state.tt.qIdx+1)+'/'+questions.length+'</div>'+
+    '<div class="stage-desc">'+(hasTTImages(q) ?
+      'Bấm "▶ Chạy ảnh" để phát chuỗi hình ảnh gợi ý liên tiếp, sau đó bấm nút của từng thí sinh khi họ đưa ra câu trả lời (theo đúng thứ tự thực tế).' :
+      'Bấm "Bắt đầu" để tính giờ chung, sau đó bấm nút của từng thí sinh khi họ đưa ra câu trả lời (theo đúng thứ tự thực tế).')+'</div></div>'));
+
+  if(hasTTImages(q)){
+    stage.appendChild(buildTTImageSlideshow(q.images));
+  }
+
+  var qBox = el("div","question-box", escapeHTML(q.question));
+  stage.appendChild(qBox);
+
+  var ansBox = el("div","answer-spoiler",
+    '<div class="lbl">Đáp án (ẩn)</div><div class="answer-text" id="ttAnsText">'+escapeHTML(q.answer)+(q.explain?" — "+escapeHTML(q.explain):"")+'</div>'+
+    '<div class="reveal-toggle"><button class="btn btn-outline" id="ttRevealBtn" type="button">👁 Hiện đáp án</button></div>');
+  stage.appendChild(ansBox);
+  $("ttRevealBtn").addEventListener("click", function(){ $("ttAnsText").classList.toggle("revealed"); });
+
+  var timerRow = el("div","turn-controls");
+  timerRow.innerHTML = '<div class="timer-num" id="ttTimerNum">30</div><button class="btn btn-gold" id="ttStartBtn">▶ Bắt đầu tính giờ</button>';
+  stage.appendChild(timerRow);
+
+  var playerBtnsWrap = el("div","judge-row"); playerBtnsWrap.id="ttPlayerBtns";
+  state.players.forEach(function(p,i){
+    var b = el("button","btn btn-outline", "Chốt: "+p.name);
+    b.id = "ttLockBtn"+i;
+    b.disabled = true;
+    b.addEventListener("click", function(){ lockTTAnswer(i); });
+    playerBtnsWrap.appendChild(b);
+  });
+  stage.appendChild(playerBtnsWrap);
+
+  var resultsWrap = el("div"); resultsWrap.id="ttResultsWrap"; resultsWrap.style.marginTop="14px";
+  stage.appendChild(resultsWrap);
+
+  state.tt.timeLeft = 30; state.tt.results=[]; state.tt.locks={};
+}
+
+function lockTTAnswer(i){
+  if(state.tt.locks[i]) return;
+  state.tt.locks[i] = { timeUsed: 30 - state.tt.timeLeft };
+  var btn = $("ttLockBtn"+i);
+  btn.disabled = true; btn.textContent = "⏱ "+state.players[i].name+" — "+(30-state.tt.timeLeft)+"s";
+  renderTTJudgeRow();
+}
+function renderTTJudgeRow(){
+  var wrap = $("ttResultsWrap"); wrap.innerHTML="";
+  Object.keys(state.tt.locks).forEach(function(key){
+    var i = +key;
+    if(state.tt.locks[i].judged) return;
+    var row = el("div","judge-row");
+    row.innerHTML = state.players[i].name+" trả lời sau "+state.tt.locks[i].timeUsed+"s: ";
+    var rightBtn = el("button","btn btn-green","✓ Đúng");
+    var wrongBtn = el("button","btn btn-red","✗ Sai");
+    rightBtn.addEventListener("click", function(){ judgeTT(i, true); });
+    wrongBtn.addEventListener("click", function(){ judgeTT(i, false); });
+    row.appendChild(rightBtn); row.appendChild(wrongBtn);
+    wrap.appendChild(row);
+  });
+}
+function judgeTT(i, correct){
+  state.tt.locks[i].judged = true;
+  state.tt.locks[i].correct = correct;
+  if(correct) ding();
+  renderTTJudgeRow();
+  maybeFinishTTQuestion();
+}
+function maybeFinishTTQuestion(){
+  var allJudged = Object.keys(state.tt.locks).length>0 && Object.keys(state.tt.locks).every(function(k){ return state.tt.locks[k].judged; });
+  var allAnswered = Object.keys(state.tt.locks).length === state.players.length;
+  if(!(allJudged && (allAnswered || state.tt.timeLeft<=0))) return;
+  // tính điểm: đúng, sắp theo thời gian tăng dần
+  var correctList = Object.keys(state.tt.locks).map(function(k){return +k;}).filter(function(i){ return state.tt.locks[i].correct; });
+  correctList.sort(function(a,b){ return state.tt.locks[a].timeUsed - state.tt.locks[b].timeUsed; });
+  var table = rankPointsTable(state.players.length);
+  correctList.forEach(function(pi, rank){ addScore(pi, table[rank]||0); });
+  var summary = el("div","small-muted");
+  summary.textContent = correctList.length ? "Đã cộng điểm theo thứ tự trả lời đúng nhanh nhất." : "Không có thí sinh nào trả lời đúng.";
+  $("stage").appendChild(summary);
+  var nextBtn = el("button","btn btn-gold btn-block");
+  nextBtn.style.marginTop="14px";
+  nextBtn.textContent = (state.tt.qIdx+1 < state.data.tangToc.questions.length) ? "Câu tiếp theo »" : "Hoàn thành vòng Tăng tốc »";
+  nextBtn.addEventListener("click", function(){ state.tt.qIdx++; renderTangToc(); });
+  $("stage").appendChild(nextBtn);
+  clearInterval(state.tt.timerId);
+  disableAllTTLockButtons();
+}
+function disableAllTTLockButtons(){
+  state.players.forEach(function(p,i){ var b=$("ttLockBtn"+i); if(b) b.disabled = true; });
+  var startBtn = $("ttStartBtn"); if(startBtn) startBtn.disabled = true;
+}
+function rankPointsTable(n){
+  if(n<=2) return [30,10];
+  if(n===3) return [30,20,10];
+  return [40,30,20,10];
+}
+
+document.addEventListener("click", function(e){
+  if(e.target && e.target.id === "ttStartBtn"){
+    e.target.disabled = true;
+    state.players.forEach(function(p,i){ var b=$("ttLockBtn"+i); if(b) b.disabled=false; });
+    state.tt.timeLeft = 30;
+    state.tt.timerId = setInterval(function(){
+      state.tt.timeLeft--;
+      var numEl = $("ttTimerNum");
+      if(numEl){ numEl.textContent = Math.max(0,state.tt.timeLeft); numEl.classList.toggle("warn", state.tt.timeLeft<=10); }
+      if(state.tt.timeLeft<=10 && state.tt.timeLeft>0) tick();
+      if(state.tt.timeLeft<=0){
+        clearInterval(state.tt.timerId);
+        buzz();
+        disableAllTTLockButtons();
+        maybeFinishTTQuestion();
+      }
+    },1000);
+  }
+});
+
+/* ============================================================
+   9. VÒNG 4 — VỀ ĐÍCH
+   ============================================================ */
+function renderVeDich(){
+  if(!state.vd.initDone){
+    var order = state.players.map(function(p,i){return i;}).sort(function(a,b){ return state.players[a].score - state.players[b].score; });
+    state.vd.turnQueue = order;
+    state.vd.turnPtr = 0;
+    state.vd.turnsPerPlayer = 2;
+    state.vd.turnsDone = {};
+    state.vd.packagesUsed = {"10":0,"20":0,"30":0};
+    state.vd.pkgPointers = {"10":0,"20":0,"30":0};
+    state.vd.initDone = true;
+  }
+  var packages = state.data.veDich.packages;
+  var totalTurnsTarget = state.vd.turnsPerPlayer * state.players.length;
+  var turnsSoFar = Object.values(state.vd.turnsDone).reduce(function(a,b){return a+b;},0);
+
+  var stage = $("stage"); stage.innerHTML="";
+  stage.appendChild(el("div","stage-head",
+    '<div><div class="stage-title">Vòng 4 · Về đích</div>'+
+    '<div class="stage-desc">Thí sinh điểm thấp hơn chọn gói trước. Mỗi gói chỉ dùng được đúng số câu hỏi hiện có trong đề. Có thể dùng "Ngôi sao hy vọng" một lần duy nhất trong cả trận.</div></div>'));
+
+  if(state.vd.activePick){ renderVeDichQuestion(); return; }
+
+  if(turnsSoFar >= totalTurnsTarget){
+    state.roundsDone[4]=true;
+    var doneWrap = el("div");
+    doneWrap.innerHTML = '<div class="stage-desc" style="margin-bottom:14px;">Đã hoàn thành các lượt chọn gói của vòng Về đích.</div>'+
+      '<button class="btn btn-gold" id="finishGameBtn">🏁 Xem kết quả chung cuộc</button>';
+    stage.appendChild(doneWrap);
+    $("finishGameBtn").addEventListener("click", showFinalResults);
+    return;
+  }
+
+  var curIdx = state.vd.turnQueue[state.vd.turnPtr % state.vd.turnQueue.length];
+  var curPlayer = state.players[curIdx];
+  stage.appendChild(el("div","small-muted","Lượt chọn gói của: <b style='color:var(--gold-300)'>"+curPlayer.name+"</b>"));
+
+  var grid = el("div","package-grid"); grid.style.marginTop="14px";
+  ["10","20","30"].forEach(function(val){
+    var total = packages[val].length;
+    var used = state.vd.pkgPointers[val];
+    var left = Math.max(0, total-used);
+    var tile = el("button","package-tile", '<div class="pts">'+val+'đ</div><div class="left">'+(left>0?left+" câu còn lại":"đã hết câu")+'</div>');
+    tile.disabled = left<=0;
+    tile.addEventListener("click", function(){ pickVeDichPackage(curIdx, val); });
+    grid.appendChild(tile);
+  });
+  stage.appendChild(grid);
+
+  if(!curPlayer.starUsed){
+    var starRow = el("div","star-toggle");
+    starRow.innerHTML = '<input type="checkbox" id="starCheckbox"> <label for="starCheckbox">★ Dùng Ngôi sao hy vọng ở lượt này (nhân đôi điểm được/mất)</label>';
+    stage.appendChild(starRow);
+  }
+}
+
+function pickVeDichPackage(playerIdx, val){
+  var packages = state.data.veDich.packages[val];
+  var ptr = state.vd.pkgPointers[val];
+  var q = packages[ptr % packages.length];
+  state.vd.pkgPointers[val] = ptr+1;
+  var starActive = !!(document.getElementById("starCheckbox") && document.getElementById("starCheckbox").checked);
+  state.vd.activePick = { value:+val, question:q, playerIdx:playerIdx, starActive:starActive, stolen:false };
+  renderVeDichQuestion();
+}
+
+function renderVeDichQuestion(){
+  var pick = state.vd.activePick;
+  var player = state.players[pick.playerIdx];
+  var stage = $("stage"); stage.innerHTML="";
+  stage.appendChild(el("div","stage-head",
+    '<div><div class="stage-title">Về đích · Gói '+pick.value+' điểm'+(pick.starActive?' · ★ Ngôi sao hy vọng':'')+'</div>'+
+    '<div class="stage-desc">Người trả lời chính: <b style="color:var(--gold-300)">'+player.name+'</b></div></div>'));
+
+  var qBox = el("div","question-box", escapeHTML(pick.question.question));
+  stage.appendChild(qBox);
+
+  var ansBox = el("div","answer-spoiler",
+    '<div class="lbl">Đáp án (ẩn)</div><div class="answer-text" id="vdAnsText">'+escapeHTML(pick.question.answer)+'</div>'+
+    '<div class="reveal-toggle"><button class="btn btn-outline" id="vdRevealBtn" type="button">👁 Hiện đáp án</button></div>');
+  stage.appendChild(ansBox);
+  $("vdRevealBtn").addEventListener("click", function(){ $("vdAnsText").classList.toggle("revealed"); });
+
+  var judge = el("div","judge-row");
+  judge.innerHTML = '<button class="btn btn-green" id="vdRightBtn">✓ '+player.name+' trả lời đúng</button>'+
+    '<button class="btn btn-red" id="vdWrongBtn">✗ '+player.name+' trả lời sai</button>';
+  stage.appendChild(judge);
+
+  $("vdRightBtn").addEventListener("click", function(){
+    var pts = pick.value * (pick.starActive?2:1);
+    addScore(pick.playerIdx, pts); ding();
+    if(pick.starActive) player.starUsed = true;
+    finishVeDichTurn();
+  });
+  $("vdWrongBtn").addEventListener("click", function(){
+    if(pick.starActive){ addScore(pick.playerIdx, -pick.value*2); player.starUsed = true; }
+    buzz();
+    offerSteal();
+  });
+}
+
+function offerSteal(){
+  var pick = state.vd.activePick;
+  var stage = $("stage");
+  var box = el("div");
+  box.innerHTML = '<div class="stage-desc" style="margin-top:14px;">Các thí sinh khác có muốn giành quyền trả lời cho '+pick.value+' điểm không?</div>'+
+    '<div class="steal-list" id="stealPick"></div>'+
+    '<div class="judge-row" id="stealJudge" style="display:none;"><button class="btn btn-green" id="stealRightBtn">✓ Đúng</button><button class="btn btn-red" id="stealWrongBtn">✗ Sai</button></div>'+
+    '<div class="turn-controls"><button class="btn btn-outline" id="noStealBtn">Không ai giành, bỏ qua câu này »</button></div>';
+  stage.appendChild(box);
+  var chosen = null;
+  var pickWrap = $("stealPick");
+  state.players.forEach(function(p,i){
+    if(i===pick.playerIdx) return;
+    var chip = el("button","steal-chip", p.name);
+    chip.addEventListener("click", function(){
+      chosen = i;
+      pickWrap.querySelectorAll(".steal-chip").forEach(function(c){c.classList.remove("picked");});
+      chip.classList.add("picked");
+      $("stealJudge").style.display = "flex";
+    });
+    pickWrap.appendChild(chip);
+  });
+  $("stealRightBtn").addEventListener("click", function(){ if(chosen===null) return; addScore(chosen, pick.value); ding(); finishVeDichTurn(); });
+  $("stealWrongBtn").addEventListener("click", function(){ if(chosen===null) return; buzz(); finishVeDichTurn(); });
+  $("noStealBtn").addEventListener("click", finishVeDichTurn);
+}
+
+function finishVeDichTurn(){
+  var idx = state.vd.turnQueue[state.vd.turnPtr % state.vd.turnQueue.length];
+  state.vd.turnsDone[idx] = (state.vd.turnsDone[idx]||0) + 1;
+  state.vd.turnPtr++;
+  state.vd.activePick = null;
+  renderVeDich();
+}
+
+/* ============================================================
+   10. KẾT QUẢ CHUNG CUỘC
+   ============================================================ */
+function showFinalResults(){
+  $("gameShell").classList.remove("active");
+  $("finalScreen").classList.remove("hidden");
+  var sorted = state.players.map(function(p,i){return {p:p,i:i};}).sort(function(a,b){ return b.p.score - a.p.score; });
+  var podium = $("podium"); podium.innerHTML="";
+  sorted.forEach(function(item, rank){
+    var card = el("div","podium-card"+(rank===0?" rank-1":""));
+    card.innerHTML = (rank===0?'<div class="trophy">🏆</div>':'') +
+      '<div class="podium-rank">Hạng '+(rank+1)+'</div>'+
+      '<div class="podium-name">'+escapeHTML(item.p.name)+'</div>'+
+      '<div class="podium-score">'+item.p.score+' điểm</div>';
+    podium.appendChild(card);
+  });
+  $("leaderboardCloudBox").textContent = "";
+  saveResultsToCloudIfAdmin();
+}
+$("playAgainBtn").addEventListener("click", function(){ location.reload(); });
+
+/* ============================================================
+   11. FIREBASE: ĐĂNG NHẬP ADMIN, LƯU/TẢI ĐỀ THI, BẢNG XẾP HẠNG
+   ============================================================ */
+function showFbStatus(id, ok, msg){
+  var s = $(id);
+  s.className = "json-status " + (ok?"ok":"err");
+  s.textContent = msg;
+}
+
+function isCurrentUserAdmin(){
+  var u = fbAuth.currentUser;
+  return !!(u && u.email && ADMIN_EMAILS.indexOf(u.email) !== -1);
+}
+
+function refreshAdminUI(){
+  var user = fbAuth.currentUser;
+  if(user && isCurrentUserAdmin()){
+    $("adminLoggedOutView").classList.add("hidden");
+    $("adminLoggedInView").classList.remove("hidden");
+    $("adminEmailLabel").textContent = user.email;
+  } else {
+    $("adminLoggedOutView").classList.remove("hidden");
+    $("adminLoggedInView").classList.add("hidden");
+    if(user && !isCurrentUserAdmin()){
+      showFbStatus("adminLoginStatus", false, "Tài khoản " + user.email + " không có quyền admin.");
+      fbAuth.signOut();
+    }
+  }
+}
+fbAuth.onAuthStateChanged(refreshAdminUI);
+
+$("adminFabBtn").addEventListener("click", function(){ openModal("adminModal"); });
+
+$("adminLoginBtn").addEventListener("click", function(){
+  var email = $("adminEmail").value.trim();
+  var pass = $("adminPassword").value;
+  if(!email || !pass){ showFbStatus("adminLoginStatus", false, "Nhập đầy đủ email và mật khẩu."); return; }
+  showFbStatus("adminLoginStatus", true, "Đang đăng nhập...");
+  fbAuth.signInWithEmailAndPassword(email, pass).then(function(){
+    $("adminPassword").value = "";
+  }).catch(function(err){
+    showFbStatus("adminLoginStatus", false, "Đăng nhập thất bại: " + err.message);
+  });
+});
+
+$("adminLogoutBtn").addEventListener("click", function(){ fbAuth.signOut(); });
+
+function getCurrentExamDataForSave(){
+  if(state.data) return state.data;
+  if(dataMode === "sample") return SAMPLE_DATA;
+  if(dataMode === "paste"){
+    var txt = $("jsonPaste").value.trim();
+    if(!txt) return null;
+    var parsed;
+    try{ parsed = JSON.parse(txt); } catch(e){ return null; }
+    var errs = validateExamData(parsed);
+    if(errs.length) return null;
+    return parsed;
+  }
+  return null;
+}
+
+$("cloudSaveExamBtn").addEventListener("click", function(){
+  var data = getCurrentExamDataForSave();
+  if(!data){ showFbStatus("adminActionStatus", false, "Không có đề thi hợp lệ để lưu (hãy dán JSON hợp lệ, chọn đề mẫu, hoặc đang trong ván chơi)."); return; }
+  showFbStatus("adminActionStatus", true, "Đang lưu lên Cloud...");
+  fbDb.collection("examData").doc("current").set({
+    data: data,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    updatedBy: fbAuth.currentUser.email
+  }).then(function(){
+    showFbStatus("adminActionStatus", true, "✓ Đã lưu đề thi lên Cloud.");
+  }).catch(function(err){
+    showFbStatus("adminActionStatus", false, "Lỗi khi lưu: " + err.message);
+  });
+});
+
+$("cloudLoadExamBtn").addEventListener("click", function(){
+  showFbStatus("cloudLoadStatus", true, "Đang tải đề thi từ Cloud...");
+  fbDb.collection("examData").doc("current").get().then(function(doc){
+    if(!doc.exists){ showFbStatus("cloudLoadStatus", false, "Chưa có đề thi nào được lưu trên Cloud."); return; }
+    var data = doc.data().data;
+    document.querySelector('.data-tab[data-tab="paste"]').click();
+    $("jsonPaste").value = JSON.stringify(data, null, 2);
+    tryLoadJSON($("jsonPaste").value);
+    showFbStatus("cloudLoadStatus", true, "✓ Đã tải đề thi từ Cloud vào ô \"Dán JSON đề thi\". Bấm \"Bắt đầu thi\" để chơi.");
+  }).catch(function(err){
+    showFbStatus("cloudLoadStatus", false, "Lỗi khi tải: " + err.message);
+  });
+});
+
+$("viewLeaderboardBtn").addEventListener("click", function(){
+  var box = $("leaderboardCloudBox");
+  box.textContent = "Đang tải bảng xếp hạng...";
+  fbDb.collection("leaderboard").orderBy("score","desc").limit(20).get().then(function(snap){
+    var lines = [];
+    snap.forEach(function(doc){
+      var d = doc.data();
+      lines.push((d.name||"?") + " — " + d.score + " điểm");
+    });
+    box.textContent = lines.length ? lines.join("\n") : "Chưa có dữ liệu bảng xếp hạng trên Cloud.";
+  }).catch(function(err){
+    box.textContent = "Lỗi khi tải bảng xếp hạng: " + err.message;
+  });
+});
+
+function saveResultsToCloudIfAdmin(){
+  if(!isCurrentUserAdmin() || !state.players || !state.players.length) return;
+  var playedAt = firebase.firestore.FieldValue.serverTimestamp();
+  var savedBy = fbAuth.currentUser.email;
+  state.players.forEach(function(p){
+    fbDb.collection("leaderboard").add({
+      name: p.name,
+      score: p.score,
+      playedAt: playedAt,
+      savedBy: savedBy
+    }).catch(function(err){ console.error("Lỗi lưu điểm lên Cloud:", err); });
+  });
+}
+
+})();
+</script>
+</body>
+</html>
