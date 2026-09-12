@@ -31,6 +31,13 @@
 html,body{height:100%;}
 body{
   margin:0;font-family:var(--font-body);color:var(--ink-900);
+  background:linear-gradient(180deg, #fef2f8 0%, #f4ecff 30%, #e8ecff 62%, #ece6ff 100%);
+  min-height:100vh;-webkit-font-smoothing:antialiased;letter-spacing:.1px;position:relative;
+}
+/* Nền trang trí được tách ra thành lớp fixed riêng (thay vì background-attachment:fixed trên body)
+   để trình duyệt không phải vẽ lại toàn bộ nền mỗi khi cuộn trang — giảm giật/lag đáng kể, hiệu ứng hiển thị giữ nguyên. */
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   background:
     radial-gradient(ellipse 520px 320px at 6% 100%, rgba(255,200,220,.55) 0%, rgba(255,200,220,0) 60%),
     radial-gradient(ellipse 620px 340px at 30% 104%, rgba(255,225,235,.5) 0%, rgba(255,225,235,0) 62%),
@@ -38,14 +45,12 @@ body{
     radial-gradient(ellipse 520px 320px at 96% 100%, rgba(200,215,255,.55) 0%, rgba(200,215,255,0) 60%),
     radial-gradient(ellipse 700px 340px at 50% 0%, rgba(255,235,245,.55) 0%, rgba(255,235,245,0) 65%),
     radial-gradient(ellipse 380px 200px at 12% 55%, rgba(255,255,255,.45) 0%, rgba(255,255,255,0) 65%),
-    radial-gradient(ellipse 420px 220px at 88% 55%, rgba(255,255,255,.4) 0%, rgba(255,255,255,0) 65%),
-    linear-gradient(180deg, #fef2f8 0%, #f4ecff 30%, #e8ecff 62%, #ece6ff 100%);
-  background-attachment:fixed;
-  min-height:100vh;-webkit-font-smoothing:antialiased;letter-spacing:.1px;position:relative;
+    radial-gradient(ellipse 420px 220px at 88% 55%, rgba(255,255,255,.4) 0%, rgba(255,255,255,0) 65%);
+  transform:translateZ(0);
 }
 button{font-family:inherit;}
 ::selection{background:var(--gold-300);color:#fff;}
-h1,h2,h3,h4{font-family:var(--font-display);margin:0;}
+h1,h2,h3,h4{font-family:var(--font-display);margin:0;line-height:1.3;}
 .hidden{display:none !important;}
 .small-muted{color:var(--ink-400);font-size:13px;}
 a{color:var(--gold-300);transition:color .15s;}
@@ -89,15 +94,23 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 
 /* ============ HOME ============ */
 .home-screen{min-height:100vh;padding:34px 22px 70px;position:relative;overflow:hidden;z-index:1;}
-.home-screen::before{
-  content:"";position:absolute;right:3%;top:8%;width:min(46%,560px);aspect-ratio:1/1;
-  background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0%25' stop-color='%23ffe08a'/><stop offset='45%25' stop-color='%23fbbf24'/><stop offset='100%25' stop-color='%23ea580c'/></linearGradient><linearGradient id='b' x1='0' y1='0' x2='0' y2='1'><stop offset='0%25' stop-color='%23a78bfa'/><stop offset='100%25' stop-color='%237c3aed'/></linearGradient></defs><ellipse cx='200' cy='230' rx='150' ry='40' fill='%23fbbf24' opacity='.18'/><path d='M120 90 h160 v90 a80 80 0 0 1 -160 0 z' fill='url(%23g)' stroke='%23c2410c' stroke-width='3'/><path d='M120 110 q-40 0 -40 40 t40 40' fill='none' stroke='url(%23g)' stroke-width='16' stroke-linecap='round'/><path d='M280 110 q40 0 40 40 t-40 40' fill='none' stroke='url(%23g)' stroke-width='16' stroke-linecap='round'/><polygon points='200,120 210,152 244,152 217,172 227,204 200,184 173,204 183,172 156,152 190,152' fill='%23fffbe6' stroke='%23f59e0b' stroke-width='2'/><rect x='185' y='220' width='30' height='40' fill='url(%23g)' stroke='%23c2410c' stroke-width='3'/><rect x='140' y='258' width='120' height='34' rx='8' fill='url(%23b)' stroke='%236d28d9' stroke-width='3'/><text x='200' y='282' text-anchor='middle' font-family='Be Vietnam Pro,Arial' font-weight='900' font-size='18' fill='%23fff'>OLYMPIA</text><rect x='120' y='292' width='160' height='34' rx='8' fill='%23fb923c' stroke='%23ea580c' stroke-width='3'/></svg>");
-  background-repeat:no-repeat;background-size:contain;pointer-events:none;z-index:0;
-  filter:drop-shadow(0 30px 50px rgba(249,115,22,.35));
-}
+
 .home-topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;max-width:1180px;margin:0 auto 30px;position:relative;z-index:1;}
 .home-brand{display:flex;align-items:center;gap:12px;}
-.home-brand-mark{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#fbbf24,#f97316);color:#fff;font-weight:900;font-size:26px;box-shadow:0 8px 20px -6px rgba(249,115,22,.6);}
+.home-brand-mark{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#fbbf24,#f97316);color:#fff;font-weight:900;font-size:26px;box-shadow:0 8px 20px -6px rgba(249,115,22,.6);}
+/* ============ PHOTO UPLOAD CIRCLES (logo + hero) ============ */
+.photo-upload-circle{position:relative;cursor:pointer;background-size:cover;background-position:center;background-repeat:no-repeat;overflow:hidden;border:none;padding:0;transition:filter .15s,transform .15s var(--ease);}
+.photo-upload-circle:hover{filter:brightness(1.05);}
+.photo-upload-circle input[type="file"]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;}
+.photo-upload-circle .photo-upload-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:100%;height:100%;color:#fff;}
+.photo-upload-circle.has-photo .photo-upload-placeholder{display:none;}
+.photo-upload-circle .photo-upload-hint{position:absolute;left:0;right:0;bottom:0;background:rgba(30,20,10,.55);color:#fff;font-size:10px;font-weight:700;text-align:center;padding:3px 2px;opacity:0;transition:opacity .18s;letter-spacing:.2px;}
+.photo-upload-circle:hover .photo-upload-hint{opacity:1;}
+#heroPhotoBtn{position:absolute;right:3%;top:8%;width:min(40%,440px);aspect-ratio:1/1;border-radius:50%;background-color:#fde9c8;box-shadow:0 30px 50px -10px rgba(249,115,22,.45),0 0 0 6px #fff;z-index:0;}
+#heroPhotoBtn .photo-upload-placeholder{color:#c2410c;}
+#heroPhotoBtn .photo-upload-placeholder svg{width:20%;height:20%;min-width:36px;min-height:36px;}
+#heroPhotoBtn .photo-upload-placeholder span{font-size:13px;font-weight:800;margin-top:6px;max-width:80%;text-align:center;}
+#brandPhotoBtn .photo-upload-placeholder svg{width:22px;height:22px;}
 .home-brand-copy b{display:block;font-size:15px;letter-spacing:2px;color:#f97316;font-weight:900;}
 .home-brand-copy span{display:block;font-size:11px;color:#9ca3af;margin-top:2px;letter-spacing:.6px;}
 .home-user{display:flex;align-items:center;gap:10px;color:#6b7280;font-size:13px;}
@@ -110,8 +123,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .home-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px;}
 .home-action-main{min-width:230px;padding:14px 26px;font-size:15px;}
 .home-action-secondary{min-width:200px;padding:14px 26px;font-size:15px;}
-.home-hero-decor{display:none;}
-.home-hero-spark{position:absolute;font-size:22px;color:#fbbf24;opacity:.9;animation:floatY 3.6s ease-in-out infinite;}
+
+.home-hero-spark{position:absolute;font-size:22px;color:#fbbf24;opacity:.9;animation:floatY 3.6s ease-in-out infinite;will-change:transform;}
 .home-hero-spark.s1{top:6%;left:52%;}
 .home-hero-spark.s2{top:56%;left:48%;animation-delay:.6s;}
 .home-hero-spark.s3{top:14%;right:8%;animation-delay:1.2s;}
@@ -234,14 +247,10 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 
 /* ============ SCOREBOARD ============ */
 .scoreboard-flat{display:flex;gap:16px;background:transparent;border:none;padding:22px 22px 10px;flex-wrap:wrap;}
-.sb-cell{flex:1;min-width:150px;background:linear-gradient(135deg,#a5b4fc 0%,#818cf8 45%,#6366f1 100%);border:2px solid #fff;border-radius:20px;padding:14px 18px 16px;display:flex;flex-direction:column;position:relative;overflow:hidden;gap:2px;transition:transform .2s var(--ease),box-shadow .2s;box-shadow:0 12px 26px -10px rgba(99,102,241,.5),inset 0 2px 0 rgba(255,255,255,.35);}
-.sb-cell::before{content:"🏛️";position:absolute;left:14px;top:26px;font-size:28px;opacity:.75;filter:drop-shadow(0 3px 6px rgba(0,0,0,.15));}
-.sb-cell::after{content:"🌿      🌿";position:absolute;right:14px;top:26px;font-size:16px;letter-spacing:20px;opacity:.7;pointer-events:none;}
-.sb-cell .sb-name{background:rgba(255,255,255,.95);color:#6366f1;border-radius:999px;padding:6px 14px;font-size:11.5px;font-weight:900;letter-spacing:.8px;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.12);align-self:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+.sb-cell{flex:1;min-width:150px;background:linear-gradient(135deg,#a5b4fc 0%,#818cf8 45%,#6366f1 100%);border:2px solid #fff;border-radius:20px;padding:14px 18px 16px;display:flex;flex-direction:column;position:relative;overflow:visible;gap:2px;transition:transform .2s var(--ease),box-shadow .2s;box-shadow:0 12px 26px -10px rgba(99,102,241,.5),inset 0 2px 0 rgba(255,255,255,.35);}
+.sb-cell .sb-name{background:rgba(255,255,255,.95);color:#6366f1;border-radius:999px;padding:8px 14px 7px;font-size:11.5px;line-height:1.5;font-weight:900;letter-spacing:.8px;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.12);align-self:center;white-space:nowrap;overflow-x:hidden;overflow-y:visible;text-overflow:ellipsis;max-width:100%;}
 .sb-cell .sb-score{background:none;-webkit-text-fill-color:initial;color:#fff;font-family:"Be Vietnam Pro",sans-serif;font-size:40px;font-weight:900;text-align:center;padding:12px 4px 2px;letter-spacing:-1px;text-shadow:0 3px 8px rgba(0,0,0,.25);}
 .sb-cell.leader{background:linear-gradient(135deg,#ffd28a 0%,#fbbf24 30%,#fb923c 65%,#f97316 100%);box-shadow:0 14px 30px -10px rgba(249,115,22,.65),inset 0 2px 0 rgba(255,255,255,.4);}
-.sb-cell.leader::before{content:"✈️";}
-.sb-cell.leader::after{content:"🏅      🏅";}
 .sb-cell.leader .sb-name{color:#c2410c;}
 .sb-cell.turn{transform:translateY(-4px);box-shadow:0 0 0 4px rgba(255,237,213,.9),0 16px 32px -10px rgba(249,115,22,.55);}
 .sb-cell.turn .sb-name{background:linear-gradient(135deg,#ffb347,#f97316);color:#fff;}
@@ -251,7 +260,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 /* ============ GAME SHELL / STAGE ============ */
 #gameShell{position:relative;padding-bottom:120px;background:transparent;}
 .stage{background:transparent;border:none;padding:22px 34px 4px;min-height:420px;position:relative;overflow:visible;}
-.stage-hero{font-family:"Be Vietnam Pro",sans-serif;font-size:clamp(36px,5.5vw,62px);font-weight:900;letter-spacing:-1px;background:linear-gradient(120deg,#fb923c 0%,#f97316 55%,#ea580c 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(0 6px 16px rgba(249,115,22,.3));margin:12px 0 22px;text-align:center;position:relative;}
+.stage-hero{font-family:"Be Vietnam Pro",sans-serif;font-size:clamp(36px,5.5vw,62px);font-weight:900;line-height:1.4;letter-spacing:-1px;background:linear-gradient(120deg,#fb923c 0%,#f97316 55%,#ea580c 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;filter:drop-shadow(0 6px 16px rgba(249,115,22,.3));margin:20px 0 22px;padding-top:12px;text-align:center;position:relative;}
 .stage-hero::before, .stage-hero::after{content:"🌾";position:absolute;top:50%;transform:translateY(-50%);font-size:.72em;filter:drop-shadow(0 4px 10px rgba(249,115,22,.35));}
 .stage-hero::before{left:calc(50% - 7.5em);}
 .stage-hero::after{right:calc(50% - 7.5em);}
@@ -267,9 +276,6 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .rt-tab:not(:last-child)::after{content:"";position:absolute;right:0;top:4px;bottom:4px;width:1px;background:rgba(30,64,175,.2);transform:skewX(-14deg);}
 .rt-tab.active{background:linear-gradient(135deg,#93c5fd,#3b82f6);color:#fff;box-shadow:inset 0 -3px 0 rgba(30,64,175,.3);}
 .rt-chevron{position:relative;display:flex;align-items:stretch;background:#fff;border:1.5px solid #e0e7ff;border-top:none;border-radius:0 0 14px 14px;min-height:74px;margin:0;box-shadow:0 12px 28px -14px rgba(124,58,237,.3);}
-.rt-chevron::before,.rt-chevron::after{content:"";position:absolute;top:0;bottom:0;width:20px;background:linear-gradient(180deg,#93c5fd,#3b82f6);}
-.rt-chevron::before{left:-20px;clip-path:polygon(0 28%,100% 0,100% 100%,0 72%);}
-.rt-chevron::after{right:-20px;clip-path:polygon(0 0,100% 28%,100% 72%,0 100%);}
 .rt-q{flex:1;display:flex;align-items:center;padding:16px 22px;font-size:15.5px;line-height:1.5;color:#1e1b3a;font-weight:600;}
 .rt-side{width:104px;flex:none;background:linear-gradient(135deg,#a78bfa,#7c3aed);display:flex;flex-direction:column;align-items:center;justify-content:center;border-left:none;border-radius:0 0 12px 0;}
 .rt-big{font-family:"Be Vietnam Pro";font-weight:900;font-size:32px;color:#fff;line-height:1;}
@@ -325,7 +331,6 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .vcnv2-panel{border-radius:20px;overflow:hidden;position:relative;}
 .vcnv2-image-panel{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;min-height:320px;background:linear-gradient(135deg,#60a5fa,#2563eb);border:3px solid #fff;box-shadow:0 16px 36px -16px rgba(59,130,246,.5);gap:4px;padding:4px;border-radius:22px;}
 .vcnv2-quad{position:relative;background-size:200% 200%;background-repeat:no-repeat;border-radius:12px;background-color:#3b82f6;background-image:linear-gradient(135deg,#60a5fa,#3b82f6,#2563eb);display:flex;align-items:center;justify-content:center;}
-.vcnv2-quad::before{content:"";position:absolute;inset:0;border-radius:12px;background:radial-gradient(circle at 25% 18%,rgba(255,255,255,.4),transparent 60%);pointer-events:none;}
 .vcnv2-cover{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#60a5fa 0%,#3b82f6 55%,#2563eb 100%);font-family:var(--font-display);font-weight:900;font-size:clamp(48px,7vw,86px);color:#fff;text-shadow:0 6px 18px rgba(0,0,0,.35);transition:opacity .5s;border-radius:12px;}
 .vcnv2-cover.revealed{opacity:0;pointer-events:none;}
 .vcnv2-center-box{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:36%;height:36%;min-width:80px;min-height:80px;background:#fff;border:4px solid #2563eb;border-radius:16px;box-shadow:0 0 0 4px rgba(255,255,255,.7),0 14px 30px -8px rgba(37,99,235,.55);z-index:3;display:flex;align-items:center;justify-content:center;transition:box-shadow .3s,border-color .3s;}
@@ -349,7 +354,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .vcnv2-clue-text{font-family:var(--font-display);font-weight:700;color:#1e1b3a;font-size:15.5px;line-height:1.55;flex:1;}
 .vcnv2-status-line{font-size:12px;color:#94a3b8;margin-top:6px;min-height:16px;}
 .vcnv2-progress-track{position:relative;height:10px;background:linear-gradient(90deg,#e0e7ff,#fef3c7);overflow:hidden;margin:16px -24px 0;border-radius:0;}
-.vcnv2-progress-fill{position:absolute;top:0;right:0;bottom:0;background:linear-gradient(90deg,#fbbf24,#f97316 60%,#ec4899 100%);box-shadow:0 0 14px 2px rgba(249,115,22,.55);transition:width .3s linear;}
+.vcnv2-progress-fill{position:absolute;top:0;right:0;bottom:0;background:linear-gradient(90deg,#fbbf24,#f97316 60%,#ec4899 100%);box-shadow:0 0 14px 2px rgba(249,115,22,.55);}
 .vcnv2-title-panel{background:linear-gradient(160deg,#fff,#e0e7ff);padding:10px;min-height:196px;box-shadow:0 16px 36px -16px rgba(124,58,237,.35);border:2px solid #fff;border-radius:22px;display:flex;flex-direction:column;gap:10px;}
 .vcnv2-buzz-btn{flex:none;font-size:14.5px;padding:14px 22px;background:linear-gradient(135deg,#ffb347 0%,#fb923c 50%,#f97316 100%);color:#fff;border-radius:999px;font-weight:900;box-shadow:0 12px 26px -8px rgba(249,115,22,.65);border:none;cursor:pointer;transition:transform .16s,filter .15s;}
 .vcnv2-buzz-btn:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.06);}
@@ -380,7 +385,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .tt-frame-note{background:#f5f3ff;border:1px solid #e9e2fa;border-radius:14px;color:#6d28d9;padding:14px 18px;font-size:13.5px;border-top:none;margin-top:0;}
 .tt-frame-note b{color:#7c3aed;}
 .tt-progress-track{position:relative;height:10px;border-radius:999px;background:#eff6ff;margin:22px 26px 6px;overflow:hidden;}
-.tt-progress-fill{position:absolute;left:0;top:0;bottom:0;width:100%;background:linear-gradient(90deg,#fbbf24,#f97316 40%,#ec4899 80%,#a855f7 100%);box-shadow:0 0 14px 2px rgba(249,115,22,.55);transition:width .3s linear;border-radius:999px;}
+.tt-progress-fill{position:absolute;left:0;top:0;bottom:0;width:100%;background:linear-gradient(90deg,#fbbf24,#f97316 40%,#ec4899 80%,#a855f7 100%);box-shadow:0 0 14px 2px rgba(249,115,22,.55);border-radius:999px;}
 .tt-progress-fill.warn{background:linear-gradient(90deg,#dc2626,#ef4444 55%,#f87171 100%);}
 .tt-badge{position:absolute;right:-14px;bottom:-30px;width:128px;padding:14px 12px 16px;background:linear-gradient(135deg,#a78bfa,#7c3aed);border:3px solid #fff;border-radius:18px;transform:rotate(-4deg);box-shadow:0 16px 34px -10px rgba(124,58,237,.65);text-align:center;z-index:5;}
 .tt-badge::before{content:"";position:absolute;inset:5px;border:1px dashed rgba(255,255,255,.4);border-radius:12px;pointer-events:none;}
@@ -408,9 +413,6 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 
 /* ============ VỀ ĐÍCH ============ */
 .vd-hero-wrap{position:relative;padding-top:6px;}
-.vd-flower-doodle{position:absolute;left:6%;top:-14px;width:74px;height:74px;opacity:.85;pointer-events:none;z-index:1;}
-.vd-flower-doodle svg{width:100%;height:100%;display:block;}
-.vd-flower-doodle path, .vd-flower-doodle g, .vd-flower-doodle circle, .vd-flower-doodle ellipse{stroke:rgba(249,115,22,.6) !important;}
 .vd-avatar{border:3px solid #fb923c;background:linear-gradient(145deg,#ffedd5,#fed7aa);color:#c2410c;box-shadow:0 12px 26px -10px rgba(249,115,22,.6);}
 .vd-avatar-photo{width:150px;height:150px;border-radius:50%;object-fit:cover;border:3px solid #fb923c;box-shadow:0 12px 26px -10px rgba(249,115,22,.55);}
 .vd-avatar-name{font-family:var(--font-display);font-size:26px;font-weight:900;background:linear-gradient(120deg,#ffb347,#fb923c 50%,#f97316);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;filter:drop-shadow(0 4px 14px rgba(249,115,22,.35));}
@@ -439,11 +441,11 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .vd-pkg-cell:not(:last-child)::after{content:"/";position:absolute;right:-3px;top:4px;color:#c7b7ff;font-weight:700;}
 .vd-pkg-cell.active{color:#ea580c;background:linear-gradient(135deg,#fff7ed,#fed7aa);border-radius:10px;}
 .vd-progress-track{position:relative;height:10px;border-radius:999px;background:#eff6ff;margin:14px 20px 0;overflow:hidden;box-shadow:inset 0 1px 3px rgba(124,58,237,.1);}
-.vd-progress-fill{position:absolute;left:0;top:0;bottom:0;width:100%;background:linear-gradient(90deg,#fbbf24 0%,#f97316 45%,#ec4899 100%);box-shadow:0 0 14px 2px rgba(249,115,22,.55);transition:width .3s linear;border-radius:999px;}
+.vd-progress-fill{position:absolute;left:0;top:0;bottom:0;width:100%;background:linear-gradient(90deg,#fbbf24 0%,#f97316 45%,#ec4899 100%);box-shadow:0 0 14px 2px rgba(249,115,22,.55);border-radius:999px;}
 .vd-progress-fill.warn{background:linear-gradient(90deg,#dc2626,#ef4444 55%,#f87171 100%);}
 
 /* ============ ANSWER BAR ============ */
-.answer-bar-wrap{position:fixed;left:0;right:0;bottom:0;z-index:9999;background:rgba(255,255,255,.94);backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2);border-top:1px solid #ffe0bd;box-shadow:0 -14px 34px -14px rgba(124,58,237,.22);padding-bottom:env(safe-area-inset-bottom,0);}
+.answer-bar-wrap{position:fixed;left:0;right:0;bottom:0;z-index:9999;background:rgba(255,255,255,.94);backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2);border-top:1px solid #ffe0bd;box-shadow:0 -14px 34px -14px rgba(124,58,237,.22);padding-bottom:env(safe-area-inset-bottom,0);contain:layout style paint;transform:translateZ(0);will-change:transform;}
 .answer-bar-row{display:flex;align-items:center;gap:12px;padding:13px 20px;max-width:1180px;margin:0 auto;}
 .answer-bar-row input[type=text]{flex:1;background:#fff;border:2px solid #f0e6ff;border-radius:14px;color:#1e1b3a;font-size:15px;padding:13px 18px;transition:border-color .18s;box-shadow:inset 0 1px 3px rgba(124,58,237,.06);}
 .answer-bar-row input[type=text]:disabled{opacity:.5;cursor:not-allowed;}
@@ -477,11 +479,11 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .podium-rank{font-size:12px;color:#a78bfa;font-weight:800;letter-spacing:.4px;text-transform:uppercase;}
 .podium-name{font-size:16px;font-weight:800;margin-top:6px;color:#1e1b3a;}
 .podium-score{font-size:27px;font-weight:900;margin-top:4px;font-family:var(--font-display);background:linear-gradient(120deg,#ffb347,#fb923c 50%,#f97316);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;}
-.trophy{font-size:36px;filter:drop-shadow(0 12px 22px rgba(249,115,22,.5));animation:trophyFloat 3s ease-in-out infinite;}
+.trophy{font-size:36px;filter:drop-shadow(0 12px 22px rgba(249,115,22,.5));animation:trophyFloat 3s ease-in-out infinite;will-change:transform;}
 @keyframes trophyFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
 
 /* ============ MODAL ============ */
-.modal-overlay{position:fixed;inset:0;background:rgba(90,70,150,.35);backdrop-filter:blur(8px) saturate(1.15);-webkit-backdrop-filter:blur(8px) saturate(1.15);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;}
+.modal-overlay{position:fixed;inset:0;background:rgba(90,70,150,.35);backdrop-filter:blur(8px) saturate(1.15);-webkit-backdrop-filter:blur(8px) saturate(1.15);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;contain:layout style paint;}
 .modal-overlay.open{display:flex;animation:modalFade .18s ease;}
 @keyframes modalFade{from{opacity:0;}to{opacity:1;}}
 .modal-box{background:linear-gradient(165deg,#fff,#fdf7ff);border:1px solid #f0e6ff;border-radius:26px;max-width:560px;width:100%;padding:26px;box-shadow:0 32px 70px -20px rgba(124,58,237,.4),inset 0 2px 0 rgba(255,255,255,.9);max-height:82vh;overflow:auto;animation:modalPop .22s var(--ease);}
@@ -526,7 +528,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   .home-room-grid{grid-template-columns:1fr;}
   .home-topbar{margin-bottom:32px;}
   .home-screen{padding:24px 14px 60px;}
-  .home-screen::before{position:relative;width:70%;right:auto;margin:16px auto 0;display:block;height:auto;}
+  #heroPhotoBtn{position:relative;width:70%;right:auto;top:auto;margin:16px auto 0;}
   .home-hero-copy{text-align:center;margin:0 auto;}
   .home-desc{margin:16px auto 0;}
   .home-actions{justify-content:center;}
@@ -554,11 +556,18 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 <div class="hidden" id="appRoot">
   <div id="homeScreen" class="home-screen">
     <div class="home-topbar">
-      <div class="home-brand"><div class="home-brand-mark">🏆</div><div class="home-brand-copy"><b>OLYMPIA ONLINE</b><span>PHÒNG LUYỆN TẬP · 2026</span></div></div>
+      <div class="home-brand"><div class="home-brand-mark photo-upload-circle" id="brandPhotoBtn" title="Nhấn để thay ảnh"><div class="photo-upload-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div><input type="file" accept="image/*" id="brandPhotoInput"></div><div class="home-brand-copy"><b>OLYMPIA ONLINE</b><span>PHÒNG LUYỆN TẬP · 2026</span></div></div>
       <div class="home-user"><span id="homeUserName">—</span><img id="homeUserAvatar" class="hidden" src="" alt=""><button class="icon-btn" id="homeLogoutBtn" title="Đăng xuất" type="button"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button></div>
     </div>
     <div class="home-hero">
-      <div class="home-hero-decor" aria-hidden="true"></div>
+      <div class="home-hero-decor photo-upload-circle" id="heroPhotoBtn" title="Nhấn để thay ảnh">
+        <div class="photo-upload-placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span>Tải ảnh của bạn</span>
+        </div>
+        <input type="file" accept="image/*" id="heroPhotoInput">
+        <div class="photo-upload-hint">Nhấn để đổi ảnh</div>
+      </div>
       <span class="home-hero-spark s1">✦</span>
       <span class="home-hero-spark s2">✦</span>
       <span class="home-hero-spark s3">✦</span>
@@ -973,6 +982,7 @@ var currentRoom = null;
 var currentRoomId = null;
 var mySlot = -1;
 var lastRenderSig = null;
+var lastScoreboardSig = null;
 var examDataDraft = null;
 var dataMode = "sample";
 
@@ -1036,6 +1046,8 @@ function detachCurrentRoom(){
   myJoinRequest = null;
   pendingJoinRequests = [];
   pendingJoinRequestsError = null;
+  lastRenderSig = null;
+  lastScoreboardSig = null;
 }
 
 function attachRoom(roomId){
@@ -1693,8 +1705,13 @@ function currentTurnSlot(){
   return -1;
 }
 function renderScoreboardUI(){
-  var wrap = $("scoreboard"); wrap.innerHTML="";
   var turnSlot = currentTurnSlot();
+  var sbSig = JSON.stringify([turnSlot, mySlot, currentRoom.players.map(function(p){
+    return [p.name, p.score||0, !!p.starUsed, p.fullscreenExits||0];
+  })]);
+  if(sbSig === lastScoreboardSig) return; // dữ liệu bảng điểm không đổi — bỏ qua vẽ lại để đỡ giật
+  lastScoreboardSig = sbSig;
+  var wrap = $("scoreboard"); wrap.innerHTML="";
   var maxScore = -Infinity;
   currentRoom.players.forEach(function(p){ if((p.score||0) > maxScore) maxScore = p.score||0; });
   currentRoom.players.forEach(function(p,i){
@@ -1814,29 +1831,36 @@ function roundSignature(){
   }
   return "";
 }
+// Thanh đếm ngược chạy mượt bằng CSS transition (đặt 1 lần khi tạo), thay vì JS cập nhật width mỗi tick gây giật.
+function startSmoothCountdown(el, endsAt, totalMs){
+  if(!el) return;
+  if(!endsAt || !totalMs){ el.style.transition="none"; el.style.width="0%"; return; }
+  var remain = Math.max(0, endsAt - Date.now());
+  var pct = Math.max(0, Math.min(100, (remain/totalMs)*100));
+  el.style.transition = "none";
+  el.style.width = pct+"%";
+  void el.offsetWidth; // buộc trình duyệt ghi nhận width khởi điểm trước khi chuyển sang animate
+  requestAnimationFrame(function(){
+    el.style.transition = "width "+remain+"ms linear";
+    el.style.width = "0%";
+  });
+}
 function updateCountdownTexts(){
   if(!currentRoom) return;
   var now = Date.now();
   updateRtBigLive();
   if(currentRoom.round===1 && currentRoom.kd) updateKDPhaseLabel();
-  if(currentRoom.round===2 && currentRoom.vcnv) updateVcnvProgress();
   if(currentRoom.round===3 && currentRoom.tt && currentRoom.tt.questionStartAt && !currentRoom.tt.closed){
     var limit = (currentRoom.tt.timeLimitSec||TT_DEFAULT_TIME_SEC)*1000;
     var remainMs = Math.max(0, currentRoom.tt.questionStartAt+limit-now);
-    var pct = Math.max(0, Math.min(100, (remainMs/limit)*100));
-    var fill = $("ttProgressFill"); if(fill){ fill.style.width = pct+"%"; fill.classList.toggle("warn", remainMs<=10000); }
+    var fill = $("ttProgressFill"); if(fill){ fill.classList.toggle("warn", remainMs<=10000); }
   }
   if(currentRoom.round===4 && currentRoom.vd && currentRoom.vd.activeTurn){
     var vdFill = $("vdProgressFill");
     if(vdFill){
       var vdEndsAt = +vdFill.dataset.endsAt;
       if(vdEndsAt){
-        var vdTurn = currentRoom.vd.activeTurn;
-        var vdQObj = vdTurn.questions ? vdTurn.questions[vdTurn.qIndex] : null;
-        var vdTotalMs = vdTurn.phase==="steal" ? VD_STEAL_WINDOW_MS : (vdQObj ? vdThinkMs(vdQObj.value) : 20000);
         var vdRemainMs = Math.max(0, vdEndsAt-now);
-        var vdPct = Math.max(0, Math.min(100, (vdRemainMs/vdTotalMs)*100));
-        vdFill.style.width = vdPct+"%";
         vdFill.classList.toggle("warn", vdRemainMs<=5000);
       }
     }
@@ -1915,7 +1939,7 @@ function renderKD(stage){
   var ticker = el("div","kd-ticker");
   ticker.appendChild(buildKDTabs(currentRoom.players, kd.turnIdx));
   var qRow = el("div","kd-q-row");
-  var qDisplay = (mySlot===kd.turnIdx && kd.currentQuestion) ? ((kd.currentQuestion.code? '('+escapeHTML(kd.currentQuestion.code)+') ' : '') + escapeHTML(kd.currentQuestion.question)) : "🔒 Câu hỏi đang diễn ra — nội dung sẽ được công bố sau khi kết thúc lượt của "+escapeHTML(curP.name)+".";
+  var qDisplay = kd.currentQuestion ? ((kd.currentQuestion.code? '('+escapeHTML(kd.currentQuestion.code)+') ' : '') + escapeHTML(kd.currentQuestion.question)) : "🔒 Câu hỏi sẽ hiện ra khi "+escapeHTML(curP.name)+" bắt đầu lượt trả lời.";
   qRow.appendChild(el("div","kd-q", qDisplay));
   var side = el("div","kd-side");
   var big = el("div","rt-big rt-big-live","--"); big.dataset.endsAt = kd.answerEndsAt||"";
@@ -2011,10 +2035,8 @@ function roundCornerBadge(roundNum){
 function stageHero(name){
   return el("div","stage-hero", escapeHTML((name||"").toUpperCase()));
 }
-var VD_FLOWER_SVG = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="rgba(249,115,22,.6)" stroke-width="2.4" stroke-linecap="round"><ellipse cx="50" cy="30" rx="13" ry="19"/><ellipse cx="50" cy="30" rx="13" ry="19" transform="rotate(60 50 50)"/><ellipse cx="50" cy="30" rx="13" ry="19" transform="rotate(120 50 50)"/><ellipse cx="50" cy="30" rx="13" ry="19" transform="rotate(180 50 50)"/><ellipse cx="50" cy="30" rx="13" ry="19" transform="rotate(240 50 50)"/><ellipse cx="50" cy="30" rx="13" ry="19" transform="rotate(300 50 50)"/><circle cx="50" cy="50" r="4.5"/></g></svg>';
 function vdHeroBlock(name){
   var wrap = el("div","vd-hero-wrap");
-  wrap.appendChild(el("div","vd-flower-doodle",VD_FLOWER_SVG));
   wrap.appendChild(stageHero(name));
   return wrap;
 }
@@ -2033,14 +2055,10 @@ function buildVDTicker(players, activeSlot, questionText, scoreVal){
   wrap.appendChild(chevron);
   return wrap;
 }
-function buildVDPackageStatus(pickValue){
-  var packages = (currentRoom.examData.veDich && currentRoom.examData.veDich.packages) || {};
-  var vd = currentRoom.vd;
+function buildVDPackageStatus(turn){
   var wrap = el("div","vd-pkg-status");
-  ["20","30"].forEach(function(val){
-    var total = (packages[val]||[]).length;
-    var left = Math.max(0, total-((vd.pkgPointers&&vd.pkgPointers[val])||0));
-    wrap.appendChild(el("div","vd-pkg-cell"+(String(pickValue)===val?" active":""), String(left)));
+  (turn.questions||[]).forEach(function(q, idx){
+    wrap.appendChild(el("div","vd-pkg-cell"+(idx===turn.qIndex?" active":""), String(q.value)));
   });
   return wrap;
 }
@@ -2306,8 +2324,7 @@ function renderVCNV(stage){
   progFill.dataset.endsAt = gaugeEndsAt || "";
   progFill.dataset.totalMs = gaugeTotalMs;
   progTrack.appendChild(progFill);
-  cluePanel.appendChild(progTrack);
-  var statusLine = el("div","vcnv2-status-line small-muted", statusTxt);
+  cluePanel.appendChild(progTrack);  var statusLine = el("div","vcnv2-status-line small-muted", statusTxt);
   cluePanel.appendChild(statusLine);
   grid.appendChild(cluePanel);
 
@@ -2333,16 +2350,8 @@ function renderVCNV(stage){
   grid.appendChild(titlePanel);
 
   stage.appendChild(grid);
-}
-function updateVcnvProgress(){
-  var fill = $("vcnvProgressFill");
-  if(!fill) return;
-  var endsAt = +fill.dataset.endsAt;
-  var total = +fill.dataset.totalMs || VCNV_ANSWER_WINDOW_MS;
-  if(!endsAt){ fill.style.width = "0%"; return; }
-  var left = Math.max(0, endsAt - Date.now());
-  var pct = Math.max(0, Math.min(100, (left/total)*100));
-  fill.style.width = pct+"%";
+  if(gaugeEndsAt) startSmoothCountdown(progFill, gaugeEndsAt, gaugeTotalMs);
+  else { progFill.style.transition = "none"; progFill.style.width = "0%"; }
 }
 function submitVCNVRow(idx){
   var inputEl = $("globalAnswerInput");
@@ -2575,6 +2584,11 @@ function renderTT(stage){
   frame.appendChild(buildTTBadge());
 
   stage.appendChild(frame);
+  if(t.questionStartAt && !t.closed){
+    startSmoothCountdown(progressFill, t.questionStartAt+t.timeLimitSec*1000, t.timeLimitSec*1000);
+  } else {
+    progressFill.style.transition = "none"; progressFill.style.width = "0%";
+  }
 }
 function submitTTAnswer(){
   var inputEl = $("globalAnswerInput");
@@ -2848,8 +2862,10 @@ function renderVDActiveTurn(stage){
     var progFill = el("div","vd-progress-fill"); progFill.id="vdProgressFill"; progFill.dataset.endsAt = endsAt||"";
     progTrack.appendChild(progFill);
     stage.appendChild(progTrack);
+    var vdTotalMs = turn.phase==="steal" ? VD_STEAL_WINDOW_MS : vdThinkMs(qObj.value);
+    startSmoothCountdown(progFill, endsAt, vdTotalMs);
   }
-  stage.appendChild(buildVDPackageStatus(qObj.value));
+  stage.appendChild(buildVDPackageStatus(turn));
   stage.appendChild(flat);
 }
 function advanceVDAfterQuestion(room, vd, players){
@@ -3082,6 +3098,36 @@ setInterval(function(){
 }, 1000);
 setInterval(function(){ if(currentRoom && currentRoom.status==="playing") updateCountdownTexts(); }, 500);
 
+})();
+</script>
+
+<!-- ============ UPLOAD ẢNH TÙY CHỈNH (chỉ thay đổi giao diện, không ảnh hưởng luật thi) ============ -->
+<script>
+(function(){
+  function setupPhotoUpload(btnId, inputId, storageKey){
+    var btn = document.getElementById(btnId);
+    var input = document.getElementById(inputId);
+    if(!btn || !input) return;
+    function applyPhoto(dataUrl){
+      btn.style.backgroundImage = "url('" + dataUrl + "')";
+      btn.classList.add("has-photo");
+    }
+    var saved = null;
+    try{ saved = localStorage.getItem(storageKey); }catch(e){}
+    if(saved) applyPhoto(saved);
+    input.addEventListener("change", function(){
+      var file = input.files && input.files[0];
+      if(!file) return;
+      var reader = new FileReader();
+      reader.onload = function(){
+        applyPhoto(reader.result);
+        try{ localStorage.setItem(storageKey, reader.result); }catch(e){}
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+  setupPhotoUpload("brandPhotoBtn", "brandPhotoInput", "olympiaBrandPhotoV1");
+  setupPhotoUpload("heroPhotoBtn", "heroPhotoInput", "olympiaHeroPhotoV1");
 })();
 </script>
 </body>
